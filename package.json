@@ -24,15 +24,19 @@
     "@types/helmet": "^0.0.45",
     "@types/node": "^13.7.0",
     "@types/require-directory": "^2.1.1",
+    "@types/socket.io": "^2.1.5",
+    "@types/uuid": "^7.0.3",
     "config": "^3.2.5",
     "cookie-parser": "^1.4.4",
     "csurf": "^1.11.0",
     "express": "^4.17.1",
     "helmet": "^3.21.2",
     "require-directory": "^2.1.1",
+    "socket.io": "^2.0.3",
     "ts-node": "^8.6.2",
     "tsconfig-paths": "^3.9.0",
-    "typescript": "^3.7.5"
+    "typescript": "^3.7.5",
+    "uuid": "^3.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",
