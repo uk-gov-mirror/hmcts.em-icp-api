@@ -1,24 +1,32 @@
 import * as express from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { Session } from '../models/Session';
-import {Sessions} from '../models/Sessions';
-
-const sessions: Sessions = {};
+import { redisClient as redis } from '../app';
 
 const router = express.Router();
 
-router.post('/icp/sessions', (req, res) => {
-  const newSession: Session = req.body;
-  newSession.id = uuidv4();
-  sessions[newSession.id] = newSession;
-  res.send(newSession);
-});
+router.get('/icp/sessions/:caseId', function(req, res) {
+  const caseId: string = req.params.caseId;
+  const today = Date.now();
 
-router.get('/icp/sessions/:id', function(req, res) {
-  const sessionId: string = req.params.id;
-  const session = sessions[sessionId];
-  res.send(session);
+  redis.hgetall(caseId, (err: string, session: any) => {
+    if (err !== null) {
+      throw new Error();
+    }
+
+    if (session === null || new Date(parseInt(session.dateOfHearing)).toDateString() !== new Date(today).toDateString()) {
+      const newSession: Session = {
+        sessionId: uuidv4(),
+        caseId: caseId,
+        dateOfHearing: today,
+      };
+
+      redis.hmset(caseId, newSession);
+      res.send(newSession);
+    } else if (new Date(parseInt(session.dateOfHearing)).toDateString() === new Date(today).toDateString()) {
+      res.send(session);
+    }
+  });
 });
 
 module.exports = router;
-module.exports.sessions = sessions;
