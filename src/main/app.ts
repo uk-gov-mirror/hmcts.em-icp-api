@@ -9,9 +9,25 @@ import * as path from 'path';
 import { RouterFinder } from 'router/routerFinder';
 import { HTTPError } from 'HttpError';
 const { setupDev } = require('./development');
+const redis = require('redis');
 
 const env = process.env.NODE_ENV || 'development';
 const developmentMode = env === 'development';
+
+const REDIS_PORT = process.env.REDIS_PORT || 6379;
+export const redisClient = redis.createClient({host : 'localhost', port : REDIS_PORT});
+
+redisClient.on('connect', function(){
+  console.log('connected to redis server');
+});
+
+redisClient.on('ready', () => {
+  console.log('Redis is ready');
+});
+
+redisClient.on('error', () => {
+  console.log('Error in Redis');
+});
 
 export const app = express();
 app.locals.ENV = env;
