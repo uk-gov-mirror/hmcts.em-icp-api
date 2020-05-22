@@ -5,7 +5,7 @@ import { redisClient as redis } from '../app';
 
 const router = express.Router();
 
-router.get('/icp/sessions/:caseId', function(req, res) {
+router.get('/icp/sessions/:caseId',(req, res) => {
   const caseId: string = req.params.caseId;
   const today = Date.now();
 

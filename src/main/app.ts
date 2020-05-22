@@ -4,12 +4,13 @@ import * as bodyParser from 'body-parser';
 import config = require('config');
 import cookieParser from 'cookie-parser';
 import express from 'express';
-import { Helmet } from './modules/helmet';
+import { Helmet } from './src/main/modules/helmet';
 import * as path from 'path';
 import { RouterFinder } from 'router/routerFinder';
 import { HTTPError } from 'HttpError';
-const { setupDev } = require('./development');
+const { setupDev } = require('./src/main/development');
 const redis = require('redis');
+const healthcheck = require('routes/health');
 
 const env = process.env.NODE_ENV || 'development';
 const developmentMode = env === 'development';
@@ -69,3 +70,7 @@ app.use((err: HTTPError, req: express.Request, res: express.Response) => {
   res.status(err.status || 500);
   res.send('error');
 });
+
+app.use('/health', healthcheck);
+
+module.exports = app;
