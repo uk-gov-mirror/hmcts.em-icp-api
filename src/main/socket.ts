@@ -20,7 +20,7 @@ const socket = (server: Server) => {
         if (io.sockets.adapter.rooms[data.sessionId].length === 1) {
           io.in(data.sessionId).emit(actions.PRESENTER_UPDATED, { presenterId: client.id } );
         }
-        io.broadcast.to(client.id).send(client.id);
+        io.to(client.id).emit(actions.CLIENT_JOINED, client.id);
       });
     });
 
