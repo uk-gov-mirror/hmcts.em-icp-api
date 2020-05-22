@@ -14,13 +14,24 @@ const socket = (server: Server) => {
 
     client.on('join', (data) => {
       redis.hgetall(data.caseId, (err: string, session: any) => {
+        if (err || !session) {
+          throw new Error();
+        }
+
         if (session.sessionId === data.sessionId) {
           client.join(data.sessionId);
         }
-        if (io.sockets.adapter.rooms[data.sessionId].length === 1) {
-          io.in(data.sessionId).emit(actions.PRESENTER_UPDATED, { presenterId: client.id } );
+
+        const presenterId = io.sockets.adapter.rooms[data.sessionId].length === 1 ? client.id : session.presenter;
+        io.to(client.id).emit(actions.CLIENT_JOINED, { clientId: client.id, presenterId: presenterId } );
+
+        if (presenterId !== session.presenter) {
+          redis.hset(data.caseId, 'presenter', presenterId, (err: string) => {
+            if (err) {
+              throw new Error();
+            }
+          });
         }
-        io.to(client.id).emit(actions.CLIENT_JOINED, client.id);
       });
     });
 
