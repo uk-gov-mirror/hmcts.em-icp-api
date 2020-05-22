@@ -1,16 +1,15 @@
 const { Express, Logger } = require('@hmcts/nodejs-logging');
 
 import * as bodyParser from 'body-parser';
-import config = require('config');
 import cookieParser from 'cookie-parser';
 import express from 'express';
-import { Helmet } from './modules/helmet';
+const helmet = require('helmet');
 import * as path from 'path';
-import { RouterFinder } from 'router/routerFinder';
-import { HTTPError } from 'HttpError';
+import { RouterFinder } from './router/routerFinder';
+import { HttpError } from 'httpError';
 const { setupDev } = require('./development');
 const redis = require('redis');
-const healthcheck = require('routes/health');
+const healthcheck = require('./routes/health');
 
 const env = process.env.NODE_ENV || 'development';
 const developmentMode = env === 'development';
@@ -37,8 +36,9 @@ app.use(Express.accessLogger());
 
 const logger = Logger.getLogger('app');
 
-// secure the application by adding various HTTP headers to its responses
-new Helmet(config.get('security')).enableFor(app);
+app.use(helmet());
+app.use(helmet.noCache());
+app.use(helmet.xssFilter({setOnOldIE: true}));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -58,7 +58,7 @@ app.use((req, res) => {
   res.send('not-found');
 });
 
-app.use((err: HTTPError, req: express.Request, res: express.Response) => {
+app.use((err: HttpError, req: express.Request, res: express.Response) => {
   logger.error(`${err.stack || err}`);
 
   res.locals.message = err.message;
