@@ -7,11 +7,16 @@ const router = express.Router();
 
 router.get('/icp/sessions/:caseId',(req, res) => {
   const caseId: string = req.params.caseId;
-  const today = Date.now();
 
+  if (!caseId || caseId === 'null' || caseId === 'undefined') {
+    res.statusMessage = 'Invalid case id';
+    return res.status(400).send();
+  }
+
+  const today = Date.now();
   redis.hgetall(caseId, (err: string, session: any) => {
     if (err !== null) {
-      throw new Error();
+      return res.status(500).send();
     }
 
     if (session === null || new Date(parseInt(session.dateOfHearing)).toDateString() !== new Date(today).toDateString()) {
@@ -22,9 +27,9 @@ router.get('/icp/sessions/:caseId',(req, res) => {
       };
 
       redis.hmset(caseId, newSession);
-      res.send(newSession);
+      return res.send(newSession);
     } else if (new Date(parseInt(session.dateOfHearing)).toDateString() === new Date(today).toDateString()) {
-      res.send(session);
+      return res.send(session);
     }
   });
 });
