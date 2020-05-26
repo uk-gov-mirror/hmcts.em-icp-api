@@ -3,6 +3,9 @@ nodeEnvironment: NODE_ENV
 gitRevision: GIT_REVISION
 frontendPublicHttpProtocol: PUBLIC_PROTOCOL
 
+service:
+  name: icp-api
+
 services:
   idam:
     loginUrl: IDAM_LOGIN_URL
@@ -14,23 +17,23 @@ services:
   pact:
     brokerUrl: PACT_BROKER_URL
     tag: PACT_BRANCH_NAME
-
-redis:
-  host: REDIS_HOST
-  port: REDIS_PORT
-  password: REDIS_PASSWORD
-  useTLS: REDIS_USE_TLS
-  enabled: USE_REDIS
-  secret: REDIS_SECRET
+  redis:
+    host: REDIS_HOST
+    port: REDIS_PORT
+    password: REDIS_PASSWORD
+    useTLS: REDIS_USE_TLS
+    enabled: USE_REDIS
+    secret: REDIS_SECRET
 
 security:
   referrerPolicy: "origin"
-
-useCSRFProtection: true
-
 
 appInsights:
   instrumentationKey: APPINSIGHTS_INSTRUMENTATIONKEY
 
 pact:
   pactBrokerUrl: PACT_BROKER_URL
+
+health:
+  timeout: 10000
+  deadline: 15000

@@ -1,7 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import { redisClient as redis } from './app';
 
-const actions = require('models/actions');
+const actions = require('./models/actions');
 const socketio = require('socket.io');
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -9,7 +9,7 @@ const socket = (server: Server) => {
 
   const io = socketio(server, {'origins': '*:*'} );
 
-  io.on('connection', function (client: Socket) {
+  io.on('connection', (client: Socket) => {
     console.log('SocketIO client connecting...');
 
     client.on('join', (data) => {
@@ -20,13 +20,14 @@ const socket = (server: Server) => {
 
         if (session.sessionId === data.sessionId) {
           client.join(data.sessionId);
+          client.leave(client.id);
         }
 
-        const presenterId = io.sockets.adapter.rooms[data.sessionId].length === 1 ? client.id : session.presenter;
+        const presenterId = io.sockets.adapter.rooms[data.sessionId].length === 1 ? client.id : session.presenterId;
         io.to(client.id).emit(actions.CLIENT_JOINED, { clientId: client.id, presenterId: presenterId } );
 
-        if (presenterId !== session.presenter) {
-          redis.hset(data.caseId, 'presenter', presenterId, (err: string) => {
+        if (presenterId !== session.presenterId) {
+          redis.hset(data.caseId, 'presenterId', presenterId, (err: string) => {
             if (err) {
               throw new Error();
             }
@@ -36,18 +37,28 @@ const socket = (server: Server) => {
     });
 
     client.on(actions.UPDATE_SCREEN, (screen) => {
-      io.in(screen.sessionId).emit(actions.SCREEN_UPDATED, screen.body);
+      io.in(screen.sessionId).emit(actions.SCREEN_UPDATED, screen);
     });
 
     client.on(actions.UPDATE_PRESENTER, (change) => {
-      io.in(change.sessionId).emit(actions.PRESENTER_UPDATED, change.body);
+      redis.hset(change.caseId, 'presenterId', change.presenterId, (err: string) => {
+        if (err) {
+          throw new Error();
+        }
+      });
+
+      io.in(change.sessionId).emit(actions.PRESENTER_UPDATED, change);
     });
 
-    client.on('disconnect', () => {
+    client.on('leave', (data) => {
+      client.leave(data.sessionId);
+    });
+
+    client.on('disconnecting', () => {
       Object.keys(client.rooms)
         .forEach(room => io.in(room).emit(actions.CLIENT_DISCONNECTED, { clientDisconnected: client.id } ));
 
-      console.log('SocketIO client disconnected');
+      console.log('SocketIO client disconnecting');
     });
   });
 };

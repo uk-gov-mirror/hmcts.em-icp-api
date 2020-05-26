@@ -10,7 +10,7 @@
     "start:dev": "nodemon --config nodemon.json",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "NODE_ENV=testing yarn test-unit",
-    "test-unit": "mocha -r ts-node/register src/**/*.test.ts",
+    "test-unit": "mocha -r ts-node/register src/**/*.test.ts --exit",
     "cichecks": "yarn && yarn lint  && yarn test"
   },
   "dependencies": {

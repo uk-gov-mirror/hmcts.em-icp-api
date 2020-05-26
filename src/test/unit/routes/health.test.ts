@@ -9,9 +9,8 @@ describe('/GET health', () => {
     chai.request(app)
       .get('/health')
       .end((err, res) => {
-        console.log(res.body);
         chai.expect(res.body).to.be.an('object');
-        chai.expect(res.status).to.have.status(200);
+        chai.expect(res.status).to.equal(200);
         done();
       });
   });

@@ -24,7 +24,7 @@ router.get('/icp/sessions/:caseId',(req, res) => {
         sessionId: uuidv4(),
         caseId: caseId,
         dateOfHearing: today,
-        presenter: 'null',
+        presenterId: '',
       };
 
       redis.hmset(caseId, newSession);

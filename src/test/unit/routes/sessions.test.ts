@@ -10,7 +10,25 @@ describe('/GET sessions', () => {
       .get('/icp/sessions/1234')
       .end((err, res) => {
         chai.expect(res.body).to.be.an('object');
-        chai.expect(res.status).to.have.status(200);
+        chai.expect(res.status).to.equal(200);
+        done();
+      });
+  });
+
+  it('it should return (400) Bad Request on null caseId', (done) => {
+    chai.request(app)
+      .get('/icp/sessions/null')
+      .end((err, res) => {
+        chai.expect(res.status).to.equal(400);
+        done();
+      });
+  });
+
+  it('it should return (400) Bad Request on undefined caseId', (done) => {
+    chai.request(app)
+      .get('/icp/sessions/undefined')
+      .end((err, res) => {
+        chai.expect(res.status).to.equal(400);
         done();
       });
   });
