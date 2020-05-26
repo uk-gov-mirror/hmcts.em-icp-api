@@ -1,0 +1,21 @@
+nodejs:
+  applicationPort: 8080
+  aadIdentityName: em
+  image: 'hmctspublic.azurecr.io/em/icp:latest'
+  readinessDelay: 30
+  readinessTimeout: 5
+  readinessPeriod: 15
+  readinessFailureThreshold: 10
+  livenessDelay: 30
+  livenessTimeout: 5
+  livenessPeriod: 15
+  livenessFailureThreshold: 10
+
+  keyVaults:
+    em-icp:
+      resourceGroup: em-icp
+      secrets:
+        - AppInsightsInstrumentationKey
+  environment:
+    REFORM_SERVICE_NAME: em-icp-api
+    REFORM_TEAM: em-icp-api
