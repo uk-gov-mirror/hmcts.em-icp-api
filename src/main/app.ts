@@ -3,19 +3,20 @@ const { Express, Logger } = require('@hmcts/nodejs-logging');
 import * as bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import express from 'express';
-const helmet = require('helmet');
 import * as path from 'path';
 import { RouterFinder } from './router/routerFinder';
 import { HttpError } from 'httpError';
+
 const { setupDev } = require('./development');
 const redis = require('redis');
 const healthcheck = require('./routes/health');
+const helmet = require('helmet');
 
 const env = process.env.NODE_ENV || 'development';
 const developmentMode = env === 'development';
 
 const REDIS_PORT = process.env.REDIS_PORT || 6379;
-export const redisClient = redis.createClient({host : 'localhost', port : REDIS_PORT});
+export const redisClient = redis.createClient( { host : 'localhost', port : REDIS_PORT } );
 
 redisClient.on('connect', function(){
   console.log('connected to redis server');
