@@ -1,7 +1,7 @@
-import { redisClient as redis } from '../app';
-import * as express from 'express';
+import { redisClient as redis } from "../app";
+import * as express from "express";
 
-const healthcheck = require('@hmcts/nodejs-healthcheck');
+const healthcheck = require("@hmcts/nodejs-healthcheck");
 const router = express.Router();
 
 const healthCheckConfig = {
