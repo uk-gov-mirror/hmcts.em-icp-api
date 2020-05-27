@@ -40,7 +40,7 @@ const socket = (server: Server) => {
     });
 
     client.on(actions.UPDATE_PRESENTER, (change) => {
-      redis.hset(change.caseId, 'presenterId', change.presenterId, (err: string) => {
+      redis.hset(change.caseId, 'presenterId', change.body, (err: string) => {
         if (err) {
           throw new Error();
         }
@@ -56,6 +56,7 @@ const socket = (server: Server) => {
     client.on('disconnecting', () => {
       Object.keys(client.rooms)
         .forEach(room => io.in(room).emit(actions.CLIENT_DISCONNECTED, { clientDisconnected: client.id } ));
+      client.leave(client.id);
 
       console.log('SocketIO client disconnecting');
     });
