@@ -6,24 +6,13 @@ frontendPublicHttpProtocol: PUBLIC_PROTOCOL
 service:
   name: icp-api
 
-services:
-  idam:
-    loginUrl: IDAM_LOGIN_URL
-    apiUrl: IDAM_API_URL
-    s2s_url: IDAM_S2S_URL
-    service_key: IDAM_SERVICE_KEY
-    icp_oauth2_client: IDAM_CLIENT_NAME
-    icp_oauth2_secret:
-  pact:
-    brokerUrl: PACT_BROKER_URL
-    tag: PACT_BRANCH_NAME
-  redis:
-    host: REDIS_HOST
-    port: REDIS_PORT
-    password: REDIS_PASSWORD
-    useTLS: REDIS_USE_TLS
-    enabled: USE_REDIS
-    secret: REDIS_SECRET
+redis:
+  host: REDIS_HOST
+  port: REDIS_PORT
+  password: REDIS_PASSWORD
+  useTLS: REDIS_USE_TLS
+  enabled: USE_REDIS
+  secret: REDIS_SECRET
 
 security:
   referrerPolicy: "origin"

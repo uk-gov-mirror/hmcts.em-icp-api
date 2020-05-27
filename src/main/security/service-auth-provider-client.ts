@@ -1,7 +1,8 @@
 import Axios, { AxiosInstance } from "axios";
-import * as otp from "otp";
-import { config } from "./config";
-import { logger } from "../logger";
+// import * as otp from "otp";
+import { config } from "../config";
+
+const otp = require("otp");
 
 export class ServiceAuthProviderClient {
 
@@ -34,7 +35,6 @@ export class ServiceAuthProviderClient {
       return `Bearer ${response.data}`;
     }
     catch (err) {
-      logger.error("Error getting s2s token", err.message);
       throw err;
     }
   }
