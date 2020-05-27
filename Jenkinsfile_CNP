@@ -4,7 +4,7 @@
 
 def type = "nodejs"
 def product = "em"
-def component = "icp-api"
+def component = "icp"
 
 def secrets = [
   's2s-${env}': [
