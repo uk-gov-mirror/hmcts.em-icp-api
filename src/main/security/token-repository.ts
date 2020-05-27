@@ -1,4 +1,3 @@
-import { logger } from "../logger";
 import Timeout = NodeJS.Timeout;
 
 /**
@@ -30,8 +29,6 @@ export class TokenRepository {
 
   private async updateToken(): Promise<void> {
     this.token = await this.client.getToken();
-
-    logger.log("Refreshed token");
   }
 
   /**

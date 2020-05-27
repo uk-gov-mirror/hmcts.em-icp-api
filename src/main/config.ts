@@ -1,5 +1,6 @@
-import * as aksVaultConfig from "config";
 import * as propertiesVolume from "@hmcts/properties-volume";
+const aksVaultConfig = require("config");
+
 propertiesVolume.addTo(aksVaultConfig);
 
 const IDAM_SECRET = aksVaultConfig.secrets ? aksVaultConfig.secrets["rpa-icp-api"]["show-oauth2-token"] : undefined;
@@ -8,9 +9,9 @@ const S2S_KEY = aksVaultConfig.secrets ? aksVaultConfig.secrets["rpa-icp-api"]["
 export const config = {
   idam: {
     url: process.env["IDAM_URL"] || "http://localhost:5000",
-    client: "icp-api",
+    client: "em-icp",
     secret: IDAM_SECRET  || "AAAAAAAAAAAAAAAA",
-    redirect: "https://rpa-icp-api.service.core-compute-aat.internal/oauth2/callback",
+    redirect: "https://em-icp-aat.service.core-compute-aat.internal/oauth2/callback",
   },
   s2s: {
     url: process.env["S2S_URL"] || "http://localhost:4502",

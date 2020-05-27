@@ -9,8 +9,7 @@ const socket = (server: Server) => {
   const io = socketio(server, {"origins": "*:*"} );
 
   // this allows us to set up middleware
-  io.use()
-    .on("connection", (client: Socket) => {
+  io.on("connection", (client: Socket) => {
       console.log("SocketIO client connecting...");
 
       client.on("join", (data) => {
@@ -27,8 +26,8 @@ const socket = (server: Server) => {
           io.to(client.id).emit(actions.CLIENT_JOINED, { clientId: client.id, presenterId: presenterId } );
 
           if (presenterId !== session.presenterId) {
-            redis.hset(data.caseId, "presenterId", presenterId, (err: string) => {
-              if (err) {
+            redis.hset(data.caseId, "presenterId", presenterId, (error: string) => {
+              if (error) {
                 throw new Error();
               }
             });
