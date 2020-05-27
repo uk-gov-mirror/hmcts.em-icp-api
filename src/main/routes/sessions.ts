@@ -1,15 +1,15 @@
-import * as express from 'express';
-import { v4 as uuidv4 } from 'uuid';
-import { Session } from '../models/session';
-import { redisClient as redis } from '../app';
+import * as express from "express";
+import { v4 as uuidv4 } from "uuid";
+import { Session } from "../models/session";
+import { redisClient as redis } from "../app";
 
 const router = express.Router();
 
-router.get('/icp/sessions/:caseId',(req, res) => {
+router.get("/icp/sessions/:caseId", (req, res) => {
   const caseId: string = req.params.caseId;
 
-  if (!caseId || caseId === 'null' || caseId === 'undefined') {
-    res.statusMessage = 'Invalid case id';
+  if (!caseId || caseId === "null" || caseId === "undefined") {
+    res.statusMessage = "Invalid case id";
     return res.status(400).send();
   }
 
@@ -24,7 +24,7 @@ router.get('/icp/sessions/:caseId',(req, res) => {
         sessionId: uuidv4(),
         caseId: caseId,
         dateOfHearing: today,
-        presenterId: '',
+        presenterId: "",
       };
 
       redis.hmset(caseId, newSession);
