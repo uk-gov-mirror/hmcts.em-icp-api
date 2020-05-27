@@ -20,7 +20,6 @@ const socket = (server: Server) => {
 
         if (session.sessionId === data.sessionId) {
           client.join(data.sessionId);
-          client.leave(client.id);
         }
 
         const presenterId = io.sockets.adapter.rooms[data.sessionId].length === 1 ? client.id : session.presenterId;
@@ -37,7 +36,7 @@ const socket = (server: Server) => {
     });
 
     client.on(actions.UPDATE_SCREEN, (screen) => {
-      io.in(screen.sessionId).emit(actions.SCREEN_UPDATED, screen);
+      io.in(screen.sessionId).emit(actions.SCREEN_UPDATED, screen.body);
     });
 
     client.on(actions.UPDATE_PRESENTER, (change) => {
@@ -47,7 +46,7 @@ const socket = (server: Server) => {
         }
       });
 
-      io.in(change.sessionId).emit(actions.PRESENTER_UPDATED, change);
+      io.in(change.sessionId).emit(actions.PRESENTER_UPDATED, change.body);
     });
 
     client.on('leave', (data) => {
