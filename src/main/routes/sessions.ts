@@ -2,10 +2,13 @@ import * as express from "express";
 import { v4 as uuidv4 } from "uuid";
 import { Session } from "../models/session";
 import { redisClient as redis } from "../app";
-
+import { IdamClient } from "../security/idam-client";
 const router = express.Router();
 
 router.get("/icp/sessions/:caseId", (req, res) => {
+  const idam = new IdamClient();
+  idam.authenticateRequest(req).then((x) => console.log(x));
+  idam.getUserInfo(req.header("Authorization")).then((x: any) => console.log(x.name));
   const caseId: string = req.params.caseId;
 
   if (!caseId || caseId === "null" || caseId === "undefined") {

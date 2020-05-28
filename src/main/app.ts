@@ -2,12 +2,11 @@ import * as bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import express from "express";
 import * as path from "path";
-import { RouterFinder } from "./router/routerFinder";
-import { HttpError } from "httpError";
-import { config } from "./config";
+import {RouterFinder} from "./router/routerFinder";
+import {HttpError} from "httpError";
+import {config} from "./config";
 import {TokenSet, UserinfoResponse} from "openid-client";
 
-const passport = require("passport");
 const { Issuer, Strategy } = require("openid-client");
 const { Express, Logger } = require("@hmcts/nodejs-logging");
 const { setupDev } = require("./development");
@@ -18,6 +17,7 @@ const noCache = require("nocache");
 const env = process.env.NODE_ENV || "development";
 const developmentMode = env === "development";
 const REDIS_PORT = process.env.REDIS_PORT || 6379;
+
 export const redisClient = redis.createClient( { host : "localhost", port : REDIS_PORT } );
 
 redisClient.on("ready", () => {
@@ -32,36 +32,30 @@ export const app = express();
 app.locals.ENV = env;
 
 app.use(Express.accessLogger());
-app.use(passport.initialize());
-app.use(passport.session());
 
 const verify = (tokenset: TokenSet, userinfo: UserinfoResponse, done: (err: any, user?: any) => void) => {
   logger.info("verify okay, user:", userinfo);
   return done(null, { tokenset, userinfo });
 };
 
-let issuer;
-let client;
-(async () => {
-  issuer = await Issuer.discover(`${config.idam.url}/o/.well-known/openid-configuration`);
-  client = new issuer.Client({
+export const oidc = (async () => {
+  const issuer = await Issuer.discover(`${config.idam.url}/o/.well-known/openid-configuration`);
+  const client = new issuer.Client({
     client_id: config.idam.client,
     client_secret: config.idam.secret,
     redirect_uris: [config.idam.redirect],
     scope: "openid roles profile",
   });
-  passport.use(
-    new Strategy(
-      {
-        client: client,
-        params: {
-          redirect_uri: config.idam.redirect,
-          scope: "openid roles profile",
-        },
-        sessionKey: "gdfgfdg", // being explicit here so we can set manually on logout
-      },
-      verify,
-    ));
+  return new Strategy(
+    {
+      client: client,
+      params: {
+        redirect_uri: config.idam.redirect,
+        scope: "openid roles profile",
+      }
+    },
+    verify,
+  );
 })();
 
 const logger = Logger.getLogger("app");
