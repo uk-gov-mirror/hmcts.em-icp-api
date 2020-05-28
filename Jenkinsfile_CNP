@@ -6,7 +6,11 @@ def type = "nodejs"
 def product = "em"
 def component = "icp"
 
-def secrets = []
+def secrets = [
+  's2s-${env}': [
+    secret('microservicekey-em-gw', 'FUNCTIONAL_TEST_CLIENT_S2S_TOKEN')
+  ]
+]
 
 static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
   [$class     : 'AzureKeyVaultSecret',
