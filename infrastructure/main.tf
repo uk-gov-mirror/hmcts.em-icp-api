@@ -25,7 +25,7 @@ resource "azurerm_application_insights" "appinsights" {
 
 module "key-vault" {
   source              = "git@github.com:hmcts/cnp-module-key-vault?ref=master"
-  product             = "s2s"
+  product             = "em-icp"
   env                 = "${var.env}"
   tenant_id           = "${var.tenant_id}"
   object_id           = "${var.jenkins_AAD_objectId}"
