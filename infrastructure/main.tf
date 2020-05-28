@@ -3,6 +3,7 @@ provider "azurerm" {
 }
 
 locals {
+  app_full_name = "${var.product}-${var.component}"
   vault_uri         = "${module.key-vault.key_vault_uri}"
   vault_name         = "${module.key-vault.key_vault_name}"
 }
@@ -25,7 +26,7 @@ resource "azurerm_application_insights" "appinsights" {
 
 module "key-vault" {
   source              = "git@github.com:hmcts/cnp-module-key-vault?ref=master"
-  product             = "s2s"
+  product = "${local.app_full_name}"
   env                 = "${var.env}"
   tenant_id           = "${var.tenant_id}"
   object_id           = "${var.jenkins_AAD_objectId}"
