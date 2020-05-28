@@ -4470,6 +4470,11 @@ socket.io@^2.0.3:
     socket.io-client "2.3.0"
     socket.io-parser "~3.4.0"
 
+sonar-scanner@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/sonar-scanner/-/sonar-scanner-3.1.0.tgz#51c1c1101f54b98abc5d8565209b1d9232979343"
+  integrity sha1-UcHBEB9UuYq8XYVlIJsdkjKXk0M=
+
 source-map-support@^0.5.6:
   version "0.5.16"
   resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.5.16.tgz#0ae069e7fe3ba7538c64c98515e35339eac5a042"
