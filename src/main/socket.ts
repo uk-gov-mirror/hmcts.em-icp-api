@@ -1,5 +1,6 @@
 import { Server, Socket } from "socket.io";
 import { redisClient as redis } from "./app";
+import { Participant } from "./models/participant";
 
 const actions = require("./models/actions");
 const socketio = require("socket.io");
@@ -11,14 +12,14 @@ const socket = (server: Server) => {
   // Payloads:
   // Update presenter:  { presenterId: string, sessionId: string, caseId: string }
   // Update screen: {body: IcpScreenUpdate, sessionId: string}
-  // Join: { sessionId: session.sessionId, caseId: session.caseId }
+  // Join: { sessionId: session.sessionId, caseId: session.caseId, name: session.name }
 
   io.on("connection", (client: Socket) => {
       console.log("SocketIO client connecting...");
 
       client.on("join", (data) => {
-        redis.hgetall(data.caseId, (err: string, session: any) => {
-          if (err || !session) {
+        redis.hgetall(data.caseId, (error: string, session: any) => {
+          if (error || !session) {
             throw new Error();
           }
 
@@ -26,16 +27,16 @@ const socket = (server: Server) => {
             client.join(data.sessionId);
           }
 
-          const presenterId = io.sockets.adapter.rooms[data.sessionId].length === 1 ? client.id : session.presenterId;
-          io.to(client.id).emit(actions.CLIENT_JOINED, { clientId: client.id, presenterId: presenterId } );
+          io.to(client.id).emit(actions.CLIENT_JOINED, { clientId: client.id, presenterId: session.presenterId } );
 
-          if (presenterId !== session.presenterId) {
-            redis.hset(data.caseId, "presenterId", presenterId, (error: string) => {
-              if (error) {
-                throw new Error();
-              }
+          redis.lpush(data.sessionId, {username: session.username, clientId: client.id}, (err: string) => {
+            if (err) {
+              throw new Error();
+            }
+            redis.hgetall(data.sessionId, (e: string, participants: Participant[]) => {
+              io.to(session.sessionId).emit(actions.PARTICIPANTS_UPDATED, participants);
             });
-          }
+          });
         });
       });
 
@@ -44,22 +45,28 @@ const socket = (server: Server) => {
       });
 
       client.on(actions.UPDATE_PRESENTER, (change) => {
-        redis.hset(change.caseId, "presenterId", change.body, (err: string) => {
+        redis.hset(change.caseId, change, (err: string) => {
           if (err) {
             throw new Error();
           }
         });
 
-        io.in(change.sessionId).emit(actions.PRESENTER_UPDATED, change.body);
+        io.in(change.sessionId).emit(actions.PRESENTER_UPDATED, {presenterId: change.presenterId, presenterName: change.presenterName});
       });
 
       client.on("leave", (data) => {
-        client.leave(data.sessionId);
+        client.disconnect();
       });
 
       client.on("disconnecting", () => {
         Object.keys(client.rooms)
-          .forEach(room => io.in(room).emit(actions.CLIENT_DISCONNECTED, { clientDisconnected: client.id } ));
+          .forEach(room => {
+            redis.hgetall(room, (e: string, participants: Participant[]) => {
+              const updatedParticipantsList = participants.filter(p => p.clientId !== client.id);
+              redis.hset(room, updatedParticipantsList);
+            });
+            io.in(room).emit(actions.CLIENT_DISCONNECTED, { clientDisconnected: client.id } );
+          });
 
         client.leave(client.id);
         client.disconnect();

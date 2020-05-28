@@ -7,34 +7,39 @@ const router = express.Router();
 
 router.get("/icp/sessions/:caseId", (req, res) => {
   const idam = new IdamClient();
-  idam.authenticateRequest(req).then((x) => console.log(x));
-  idam.getUserInfo(req.header("Authorization")).then((x: any) => console.log(x.name));
-  const caseId: string = req.params.caseId;
+  // idam.authenticateRequest(req).then((x) => console.log(x));
+  idam.getUserInfo(req.header("Authorization")).then((response: any) => {
+    const username = response.name;
+    const caseId: string = req.params.caseId;
 
-  if (!caseId || caseId === "null" || caseId === "undefined") {
-    res.statusMessage = "Invalid case id";
-    return res.status(400).send();
-  }
-
-  const today = Date.now();
-  redis.hgetall(caseId, (err: string, session: any) => {
-    if (err) {
-      return res.status(500).send();
+    if (!caseId || caseId === "null" || caseId === "undefined") {
+      res.statusMessage = "Invalid case id";
+      return res.status(400).send();
     }
 
-    if (!session || new Date(parseInt(session.dateOfHearing)).toDateString() !== new Date(today).toDateString()) {
-      const newSession: Session = {
-        sessionId: uuidv4(),
-        caseId: caseId,
-        dateOfHearing: today,
-        presenterId: "",
-      };
+    const today = Date.now();
+    redis.hgetall(caseId, (err: string, session: any) => {
+      if (err) {
+        return res.status(500).send();
+      }
 
-      redis.hmset(caseId, newSession);
-      return res.send(newSession);
-    } else if (new Date(parseInt(session.dateOfHearing)).toDateString() === new Date(today).toDateString()) {
-      return res.send(session);
-    }
+      if (!session || new Date(parseInt(session.dateOfHearing)).toDateString() !== new Date(today).toDateString()) {
+        const newSession: Session = {
+          sessionId: uuidv4(),
+          caseId: caseId,
+          dateOfHearing: today,
+          presenterId: "",
+          presenterName: ""
+        };
+
+        redis.hmset(caseId, newSession);
+        console.log(username);
+        return res.send({username: username, session: newSession});
+      } else if (new Date(parseInt(session.dateOfHearing)).toDateString() === new Date(today).toDateString()) {
+        console.log(username);
+        return res.send({username: username, session: session});
+      }
+    });
   });
 });
 

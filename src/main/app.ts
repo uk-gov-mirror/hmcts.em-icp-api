@@ -2,12 +2,12 @@ import * as bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import express from "express";
 import * as path from "path";
-import {RouterFinder} from "./router/routerFinder";
-import {HttpError} from "httpError";
-import {config} from "./config";
-import {TokenSet, UserinfoResponse} from "openid-client";
+import { RouterFinder } from "./router/routerFinder";
+import { HttpError } from "httpError";
+import { config } from "./config";
+import { TokenSet, UserinfoResponse } from "openid-client";
+import { Issuer, Strategy } from "openid-client";
 
-const { Issuer, Strategy } = require("openid-client");
 const { Express, Logger } = require("@hmcts/nodejs-logging");
 const { setupDev } = require("./development");
 const redis = require("redis");
