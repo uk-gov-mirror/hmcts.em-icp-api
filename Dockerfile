@@ -12,5 +12,5 @@ RUN yarn install --production  \
 # ---- Runtime image ----
 FROM base as runtime
 COPY --from=build $WORKDIR/src/main ./src/main
-# TODO: expose the right port for your application
+# TODO: which port do we want to expose?
 EXPOSE 3100
