@@ -8,7 +8,11 @@ const socket = (server: Server) => {
 
   const io = socketio(server, {"origins": "*:*"} );
 
-  // this allows us to set up middleware
+  // Payloads:
+  // Update presenter:  { presenterId: string, sessionId: string, caseId: string }
+  // Update screen: {body: IcpScreenUpdate, sessionId: string}
+  // Join: { sessionId: session.sessionId, caseId: session.caseId }
+
   io.on("connection", (client: Socket) => {
       console.log("SocketIO client connecting...");
 
