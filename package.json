@@ -13,6 +13,8 @@
     "test:unit": "mocha -r ts-node/register src/**/*.test.ts --exit",
     "test:coverage": "cross-env NODE_ENV=test NODE_PATH=. nyc mocha --require ts-node/register 'src/**/*.test.ts' './test/acceptance/**/*.test.ts' --exit",
     "test:a11y": "cross-env NODE_PATH=.",
+    "sonar-scanner": "node_modules/sonar-scanner/bin/sonar-scanner",
+    "sonar-scan": "cross-env NODE_PATH=. sonar-scanner -Dsonar.projectKey='em-icp-api' -Dsonar.sources=src/main -Dsonar.tests=test -Dsonar.exclusions=src/test/**,node_modules/**,src/** ",
     "cichecks": "yarn && yarn lint  && yarn test"
   },
   "dependencies": {
@@ -71,6 +73,7 @@
     "request": "^2.88.0",
     "rewire": "^5.0.0",
     "sinon-chai": "^3.4.0",
+    "sonar-scanner": "^3.1.0",
     "supertest": "^4.0.2",
     "ts-loader": "^6.2.1",
     "tslint": "5.20.1"
