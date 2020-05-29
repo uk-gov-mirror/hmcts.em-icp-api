@@ -30,15 +30,24 @@ export class IdamClient {
 
   public async authenticateRequest(req: any) {
     const headers = {
+      "Content-Type": "application/x-www-form-urlencoded",
       "Authorization": req.header("Authorization")
     };
 
+    const params = {
+      "client_id": config.idam.client,
+      "scope": "openid roles profile",
+      "response_type": "code",
+      "redirect_uri": config.idam.redirect
+    };
+
     try {
-      const response = await this.http.post("/o/authorize", { headers });
+      const response = await this.http.post("/o/authorize", null, { headers, params });
       console.log(response.data);
       return response.data;
     }
     catch (err) {
+      console.log(err);
       throw err;
     }
   }

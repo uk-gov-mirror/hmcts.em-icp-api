@@ -33,11 +33,15 @@ router.get("/icp/sessions/:caseId", (req, res) => {
         };
 
         redis.hmset(caseId, newSession);
-        console.log(username);
-        return res.send({username: username, session: newSession});
+        return res.send({
+          username: username,
+          session: {sessionId: newSession.sessionId, caseId: newSession.caseId, dateOfHearing: newSession.dateOfHearing}
+        });
       } else if (new Date(parseInt(session.dateOfHearing)).toDateString() === new Date(today).toDateString()) {
-        console.log(username);
-        return res.send({username: username, session: session});
+        return res.send({
+          username: username,
+          session: {sessionId: session.sessionId, caseId: session.caseId, dateOfHearing: session.dateOfHearing}
+        });
       }
     });
   });

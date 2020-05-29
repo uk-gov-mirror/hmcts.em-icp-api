@@ -7,18 +7,24 @@ import { HttpError } from "httpError";
 import { config } from "./config";
 import { TokenSet, UserinfoResponse } from "openid-client";
 import { Issuer, Strategy } from "openid-client";
+import Axios from "axios";
 
 const { Express, Logger } = require("@hmcts/nodejs-logging");
 const { setupDev } = require("./development");
 const redis = require("redis");
+// const sessions = require("./routes/sessions");
 const healthcheck = require("./routes/health");
 const helmet = require("helmet");
 const noCache = require("nocache");
 const env = process.env.NODE_ENV || "development";
 const developmentMode = env === "development";
-const REDIS_PORT = process.env.REDIS_PORT || 6379;
 
+const REDIS_PORT = process.env.REDIS_PORT || 6379;
 export const redisClient = redis.createClient( { host : "localhost", port : REDIS_PORT } );
+
+const http = Axios.create({
+  baseURL: config.idam.url
+});
 
 redisClient.on("ready", () => {
   console.log("Redis is ready");
@@ -58,6 +64,30 @@ export const oidc = (async () => {
   );
 })();
 
+async function checkAuthentication(req: any) {
+  const headers = {
+    "Content-Type": "application/x-www-form-urlencoded",
+    "Authorization": req.header("Authorization")
+  };
+
+  const params = {
+    "client_id": config.idam.client,
+    "scope": "openid roles profile",
+    "response_type": "code",
+    "redirect_uri": config.idam.redirect
+  };
+
+  try {
+    const response = await http.post("/o/authorize", null, { headers, params });
+    console.log(response);
+    return response.data;
+  }
+  catch (err) {
+    console.log("getting an error");
+    throw err;
+  }
+}
+
 const logger = Logger.getLogger("app");
 
 app.use(noCache());
@@ -92,3 +122,5 @@ app.use((err: HttpError, req: express.Request, res: express.Response) => {
 });
 
 app.use("/health", healthcheck);
+
+// app.use("/", checkAuthentication, sessions);
