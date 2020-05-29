@@ -42,14 +42,10 @@ const socket = (server: Server) => {
       });
 
       client.on(actions.UPDATE_PRESENTER, (change) => {
-        redis.hset(change.caseId, change, (err: string) => {
-          if (err) {
-            throw new Error();
-          }
-        });
+        redis.hset(change.caseId, "presenterId", change.presenterId);
+        redis.hset(change.caseId, "presenterName", change.presenterName);
 
-        io.in(change.sessionId).emit(actions.PRESENTER_UPDATED,
-          { presenter: { id: change.presenterId, username: change.presenterName }});
+        io.in(change.sessionId).emit(actions.PRESENTER_UPDATED, {id: change.presenterId, username: change.presenterName});
       });
 
       client.on("leave", (data) => {
