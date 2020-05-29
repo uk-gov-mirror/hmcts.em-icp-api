@@ -26,11 +26,16 @@ const socket = (server: Server) => {
             { client: { id: client.id, username: data.username },
                     presenter: { id: session.presenterId, username: session.presenterName }});
 
-          redis.lpush(data.sessionId, {username: session.username, clientId: client.id}, (err: string) => {
+          const newParticipant: Participant = {
+            id: client.id,
+            username: session.username
+          };
+
+          redis.lpush(data.sessionId, newParticipant, (err: string) => {
             if (err) {
               throw new Error();
             }
-            redis.hgetall(data.sessionId, (e: string, participants: Participant[]) => {
+            redis.lrange(data.sessionId, 0, -1, (e: string, participants: Participant[]) => {
               io.to(session.sessionId).emit(actions.PARTICIPANTS_UPDATED, participants);
             });
           });
@@ -55,7 +60,7 @@ const socket = (server: Server) => {
       client.on("disconnecting", () => {
         Object.keys(client.rooms)
           .forEach(room => {
-            redis.hgetall(room, (e: string, participants: Participant[]) => {
+            redis.lrange(room, 0, -1, (e: string, participants: Participant[]) => {
               const updatedParticipantsList = participants.filter(p => p.id !== client.id);
               redis.hset(room, updatedParticipantsList);
             });
@@ -63,7 +68,6 @@ const socket = (server: Server) => {
           });
 
         client.leave(client.id);
-        client.disconnect();
 
         console.log("SocketIO client disconnecting");
       });
