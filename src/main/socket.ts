@@ -64,7 +64,7 @@ const socket = (server: Server) => {
               const updatedParticipantsList = participants.filter(p => p.id !== client.id);
               redis.hset(room, updatedParticipantsList);
             });
-            io.in(room).emit(actions.CLIENT_DISCONNECTED, { clientDisconnected: client.id } );
+            io.in(room).emit(actions.CLIENT_DISCONNECTED, client.id);
           });
 
         client.leave(client.id);
