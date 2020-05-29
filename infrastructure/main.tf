@@ -55,7 +55,7 @@ resource "azurerm_key_vault_secret" "local_s2s_key" {
 # Load AppInsights key from rpa vault
 data "azurerm_key_vault" "rpa_vault" {
   name                = "rpa-${local.local_env}"
-  resource_group_name = "rpe-service-auth-provider-${local.local_env}"
+  resource_group_name = "rpa-${local.local_env}"
 }
 
 
