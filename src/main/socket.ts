@@ -9,11 +9,6 @@ const socket = (server: Server) => {
 
   const io = socketio(server, {"origins": "*:*"} );
 
-  // Payloads:
-  // Update presenter:  { presenterId: string, sessionId: string, caseId: string }
-  // Update screen: {body: IcpScreenUpdate, sessionId: string}
-  // Join: { sessionId: session.sessionId, caseId: session.caseId, name: session.name }
-
   io.on("connection", (client: Socket) => {
       console.log("SocketIO client connecting...");
 
@@ -27,7 +22,9 @@ const socket = (server: Server) => {
             client.join(data.sessionId);
           }
 
-          io.to(client.id).emit(actions.CLIENT_JOINED, { clientId: client.id, presenterId: session.presenterId } );
+          io.to(client.id).emit(actions.CLIENT_JOINED,
+            { client: { id: client.id, username: data.username },
+                    presenter: { id: session.presenterId, username: session.presenterName }});
 
           redis.lpush(data.sessionId, {username: session.username, clientId: client.id}, (err: string) => {
             if (err) {
@@ -51,7 +48,8 @@ const socket = (server: Server) => {
           }
         });
 
-        io.in(change.sessionId).emit(actions.PRESENTER_UPDATED, {presenterId: change.presenterId, presenterName: change.presenterName});
+        io.in(change.sessionId).emit(actions.PRESENTER_UPDATED,
+          { presenter: { id: change.presenterId, username: change.presenterName }});
       });
 
       client.on("leave", (data) => {
@@ -62,7 +60,7 @@ const socket = (server: Server) => {
         Object.keys(client.rooms)
           .forEach(room => {
             redis.hgetall(room, (e: string, participants: Participant[]) => {
-              const updatedParticipantsList = participants.filter(p => p.clientId !== client.id);
+              const updatedParticipantsList = participants.filter(p => p.id !== client.id);
               redis.hset(room, updatedParticipantsList);
             });
             io.in(room).emit(actions.CLIENT_DISCONNECTED, { clientDisconnected: client.id } );
