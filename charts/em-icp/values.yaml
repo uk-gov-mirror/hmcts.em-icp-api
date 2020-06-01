@@ -19,3 +19,10 @@ nodejs:
   environment:
     REFORM_SERVICE_NAME: em-icp-api
     REFORM_TEAM: em-icp-api
+
+redis:
+  enabled: false
+  cluster:
+    enabled: false
+    slaveCount: 0
+  usePassword: false
