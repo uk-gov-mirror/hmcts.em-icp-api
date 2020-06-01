@@ -1,5 +1,5 @@
 import Axios, { AxiosInstance } from "axios";
-import { config } from "../config";
+const config = require("config");
 
 /**
  * IDAM client that creates a user then gets a token
@@ -43,11 +43,9 @@ export class IdamClient {
 
     try {
       const response = await this.http.post("/o/authorize", null, { headers, params });
-      console.log(response.data);
       return response.data;
     }
     catch (err) {
-      console.log(err);
       throw err;
     }
   }

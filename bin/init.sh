@@ -13,8 +13,8 @@ read -p "Port number for new app: " port
 read -p "Product name for new app (to replace rpe product references): " product
 read -p "Component name for new app (to replace rpe component references) : " component
 
-declare -a files_with_port=(Dockerfile README.md src/main/server.ts docker-compose.yml charts/em-icp-api/values.yaml)
-declare -a files_with_product=(package.json Jenkinsfile_CNP.disabled Jenkinsfile_nightly docker-compose.yml charts/em-icp-api/Chart.yaml charts/em-icp-api/values.yaml Dockerfile README.md )
+declare -a files_with_port=(Dockerfile README.md src/main/server.ts docker-compose.yml charts/em-icp/values.yaml)
+declare -a files_with_product=(package.json Jenkinsfile_CNP.disabled Jenkinsfile_nightly docker-compose.yml charts/em-icp/Chart.yaml charts/em-icp/values.yaml Dockerfile README.md )
 
 # Replace port number
 for i in ${files_with_port[@]}
@@ -30,7 +30,7 @@ do
 done
 
 # Rename directory to provided package name
-git mv charts/em-icp-api/ charts/${product}-${component}
+git mv charts/em-icp/ charts/${product}-${component}
 
 declare -a headers_to_delete=("Purpose" "What's inside" "Setup" )
 

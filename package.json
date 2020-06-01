@@ -12,6 +12,8 @@
     "test": "NODE_ENV=testing yarn test:unit",
     "test:unit": "mocha -r ts-node/register 'src/test/unit/**/*.test.ts' --reporter spec --recursive --exit",
     "test:coverage": "cross-env NODE_ENV=test NODE_PATH=. nyc mocha --require ts-node/register 'src/test/unit/*.test.ts' './test/acceptance/**/*.test.ts' --exit",
+    "test:smoke": "NODE_ENV=test mocha -r ts-node/register 'src/test/smoke/healthcheck.test.ts' --timeout 25000 --reporter spec --exit",
+    "test:functional": "",
     "cichecks": "yarn && yarn lint  && yarn test"
   },
   "dependencies": {

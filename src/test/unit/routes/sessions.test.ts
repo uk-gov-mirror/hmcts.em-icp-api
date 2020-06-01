@@ -9,6 +9,7 @@ describe("/GET sessions", () => {
     chai.request(app)
       .get("/icp/sessions/1234")
       .end((err, res) => {
+        console.log(err);
         chai.expect(res.body).to.be.an("object");
         chai.expect(res.body.caseId).to.equal("1234");
         chai.expect(res.body.presenterId).to.equal("");

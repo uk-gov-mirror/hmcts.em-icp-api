@@ -22,6 +22,18 @@ const socket = (server: Server) => {
             client.join(data.sessionId);
           }
 
+          // if (io.sockets.adapter.rooms[session.sessionId].length === 0) {
+          //   redis
+          //     .multi()
+          //     .set(session.caseId, "presenterId", "")
+          //     .set()
+          //     .exec((execError, results) => {});
+          //
+          //
+          //   redis.hset(session.caseId, "presenterId", "");
+          //   redis.hset(session.caseId, "presenterName", "");
+          // }
+
           io.to(client.id).emit(actions.CLIENT_JOINED,
             { client: { id: client.id, username: data.username },
                     presenter: { id: session.presenterId, username: session.presenterName }});
@@ -31,11 +43,11 @@ const socket = (server: Server) => {
             username: session.username
           };
 
-          redis.lpush(data.sessionId, newParticipant, (err: string) => {
+          redis.lpush(data.sessionId, JSON.stringify(newParticipant), (err: string) => {
             if (err) {
               throw new Error();
             }
-            redis.lrange(data.sessionId, 0, -1, (e: string, participants: Participant[]) => {
+            redis.lrange(data.sessionId, 0, -1, (e: string, participants: string[]) => {
               io.to(session.sessionId).emit(actions.PARTICIPANTS_UPDATED, participants);
             });
           });
@@ -60,13 +72,15 @@ const socket = (server: Server) => {
       client.on("disconnecting", () => {
         Object.keys(client.rooms)
           .forEach(room => {
-            redis.lrange(room, 0, -1, (e: string, participants: Participant[]) => {
-              const updatedParticipantsList = participants.filter(p => p.id !== client.id);
+            redis.lrange(room, 0, -1, (e: string, participants: string[]) => {
+              const updatedParticipantsList = participants
+                .map(p => JSON.parse(p))
+                .filter(p => p.id !== client.id)
+                .map(p => JSON.stringify(p));
               redis.hset(room, updatedParticipantsList);
             });
             io.in(room).emit(actions.CLIENT_DISCONNECTED, client.id);
           });
-
         client.leave(client.id);
 
         console.log("SocketIO client disconnecting");
