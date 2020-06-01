@@ -1,6 +1,6 @@
 nodejs:
   applicationPort: 8080
   aadIdentityName: rpe
-  ingressHost: em-icp-api.{{ .Values.global.environment }}.platform.hmcts.net
+  ingressHost: em-icp.{{ .Values.global.environment }}.platform.hmcts.net
   environment:
     image: 'hmctspublic.azurecr.io/rpe/expressjs-template:latest'

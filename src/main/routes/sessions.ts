@@ -7,7 +7,10 @@ const router = express.Router();
 
 router.get("/icp/sessions/:caseId", (req, res) => {
   const idam = new IdamClient();
-  // idam.authenticateRequest(req).then((x) => console.log(x));
+
+  // idam.authenticateRequest(req)
+  //   .then(() => console.log("bagggg"))
+  //   .catch((err) => res.status(err.response.status).send({error: err.response.data.error_description}));
   idam.getUserInfo(req.header("Authorization")).then((response: any) => {
     const username = response.name;
     const caseId: string = req.params.caseId;
@@ -44,7 +47,7 @@ router.get("/icp/sessions/:caseId", (req, res) => {
         });
       }
     });
-  });
+  }).catch((err) => res.status(err.response.status).send({error: err.response.data.error_description}));
 });
 
 module.exports = router;
