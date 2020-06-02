@@ -19,7 +19,7 @@ const developmentMode = env === "development";
 export const redisClient = redis.createClient({
   host : config.redis.host,
   port : config.redis.port,
-  password: config.redis.password
+  password: config.redis.password,
 });
 
 redisClient.on("ready", () => {
@@ -46,9 +46,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use((req, res, next) => {
   res.setHeader(
-      "Cache-Control",
-      "no-cache, max-age=0, must-revalidate, no-store",
-    );
+    "Cache-Control",
+    "no-cache, max-age=0, must-revalidate, no-store",
+  );
   next();
 });
 app.use("/", RouterFinder.findAll(path.join(__dirname, "routes")));

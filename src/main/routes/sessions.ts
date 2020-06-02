@@ -37,22 +37,22 @@ router.get("/icp/sessions/:caseId", (req, res) => {
                 caseId: caseId,
                 dateOfHearing: today,
                 presenterId: "",
-                presenterName: ""
+                presenterName: "",
               };
 
               redis.hmset(caseId, newSession);
               return res.send({
                 username: username,
-                session: {sessionId: newSession.sessionId, caseId: newSession.caseId, dateOfHearing: newSession.dateOfHearing}
+                session: {sessionId: newSession.sessionId, caseId: newSession.caseId, dateOfHearing: newSession.dateOfHearing},
               });
             } else if (new Date(parseInt(session.dateOfHearing)).toDateString() === new Date(today).toDateString()) {
               return res.send({
                 username: username,
-                session: {sessionId: session.sessionId, caseId: session.caseId, dateOfHearing: session.dateOfHearing}
+                session: {sessionId: session.sessionId, caseId: session.caseId, dateOfHearing: session.dateOfHearing},
               });
             }
           });
-      }).catch((error) => res.status(error.response.status).send({error: error.response.data.error_description}));
+        }).catch((error) => res.status(error.response.status).send({error: error.response.data.error_description}));
     }).catch((err) => res.status(401).send({error: err.message}));
 });
 

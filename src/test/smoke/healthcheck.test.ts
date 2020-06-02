@@ -11,7 +11,7 @@ describe("ICP Server health check", () => {
       .end((err: any, res: any) => {
         chai.expect(res.status).to.be.equal(200);
         done();
-    });
+      });
   });
 
   it("should return status UP", done => {
@@ -20,6 +20,6 @@ describe("ICP Server health check", () => {
       .end((err: any, res: any) => {
         chai.expect(res.body.status).to.equal("UP");
         done();
-    });
+      });
   });
 });
