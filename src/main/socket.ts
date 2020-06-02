@@ -1,15 +1,24 @@
 import { Server, Socket } from "socket.io";
 import { redisClient as redis } from "./app";
 import { Participant } from "./models/participant";
+import { IdamClient } from "./security/idam-client";
 
 const actions = require("./models/actions");
 const socketio = require("socket.io");
 
+const idam = new IdamClient();
+
 const socket = (server: Server) => {
 
   const io = socketio(server, {"origins": "*:*"} );
-
-  io.on("connection", (client: Socket) => {
+  io.use((client: Socket, next: () => void) => {
+    idam.verifyToken(client.handshake.query.token)
+      .then(() => {
+        next();
+      }).catch((err => {
+        throw err;
+      }));
+  }).on("connection", (client: Socket) => {
       console.log("SocketIO client connecting...");
 
       client.on("join", (data) => {
