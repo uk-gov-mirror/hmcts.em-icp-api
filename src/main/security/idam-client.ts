@@ -2,10 +2,10 @@ import Axios, { AxiosInstance } from "axios";
 const config = require("config");
 const jwt = require("jsonwebtoken");
 const jwkToPem = require("jwk-to-pem");
-
+const jwtDecode = require("jwt-decode");
 
 /**
- * IDAM client that creates a user then gets a token
+ * IDAM client that handles token authentication
  */
 export class IdamClient {
 
@@ -33,37 +33,20 @@ export class IdamClient {
 
   public async verifyToken(token: string) {
     const tokenString = token.split(" ")[1];
-    this.decodeToken(token)
-      .then((decodedToken: any) => {
-        this.getJwks()
-          .then(keys => {
-            const pem = jwkToPem(decodedToken);
-
-            jwt.verify(tokenString, pem, {algorithms: decodedToken.alg}, (err: any, outcome: any) => {
-              if (err) {
-                throw err;
-              }
-            });
-        })
-        .catch((err) => {
-          throw err;
-        });
-      })
-      .catch((error) => {
-        throw error;
-      });
-  }
-
-  private async decodeToken(token: string) {
-    return await jwt.decode(token).then((decoded: any) => {
-      return decoded.header;
+    const decodedHeader = jwtDecode(tokenString, { header: true });
+    const algorithm = await this.getJwks(decodedHeader.alg);
+    const pem = jwkToPem(algorithm);
+    jwt.verify(tokenString, pem, {algorithms: algorithm.alg}, (err: any, outcome: any) => {
+      if (err) {
+        throw err;
+      }
     });
   }
 
-  private async getJwks() {
+  private async getJwks(algorithm: string) {
     try {
       const response = await this.http.get("/o/jwks");
-      return response.data;
+      return response.data.keys.find((key: any) => key.alg === algorithm);
     }
     catch (err) {
       throw err;

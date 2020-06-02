@@ -53,8 +53,7 @@ router.get("/icp/sessions/:caseId", (req, res) => {
             }
           });
       }).catch((error) => res.status(error.response.status).send({error: error.response.data.error_description}));
-    })
-    .catch((err) => res.status(401).send({error: err.message}));
+    }).catch((err) => res.status(401).send({error: err.message}));
 });
 
 module.exports = router;
