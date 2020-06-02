@@ -13,22 +13,16 @@ export class IdamClient {
 
   constructor() {
     this.http = Axios.create({
-      baseURL: config.idam.url
+      baseURL: config.idam.url,
     });
   }
 
   public async getUserInfo(token: string): Promise<string> {
     const headers = {
-      "Authorization": token
+      "Authorization": token,
     };
-
-    try {
-      const response = await this.http.get("/o/userinfo", { headers });
-      return response.data;
-    }
-    catch (err) {
-      throw err;
-    }
+    const response = await this.http.get("/o/userinfo", { headers });
+    return response.data;
   }
 
   public async verifyToken(token: string) {
@@ -44,12 +38,7 @@ export class IdamClient {
   }
 
   private async getJwks(algorithm: string) {
-    try {
-      const response = await this.http.get("/o/jwks");
-      return response.data.keys.find((key: any) => key.alg === algorithm);
-    }
-    catch (err) {
-      throw err;
-    }
+    const response = await this.http.get("/o/jwks");
+    return response.data.keys.find((key: any) => key.alg === algorithm);
   }
 }
