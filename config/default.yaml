@@ -7,13 +7,10 @@ service:
   name: icp-api
 
 app:
-  useCSRFProtection: "false"
+  useCSRFProtection: "true"
 
 idam:
   url: "http://localhost:5000"
-  client: "webshow"
-  secret: "AAAAAAAAAAAAAAAA"
-  redirect: "https://em-show-aat.service.core-compute-aat.internal/oauth2/callback"
 
 s2s:
   url: "http://localhost:4502"

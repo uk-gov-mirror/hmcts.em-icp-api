@@ -1,5 +1,8 @@
 import Axios, { AxiosInstance } from "axios";
 const config = require("config");
+const jwt = require("jsonwebtoken");
+const jwkToPem = require("jwk-to-pem");
+
 
 /**
  * IDAM client that creates a user then gets a token
@@ -14,9 +17,9 @@ export class IdamClient {
     });
   }
 
-  public async getUserInfo(jwt: string): Promise<string> {
+  public async getUserInfo(token: string): Promise<string> {
     const headers = {
-      "Authorization": jwt
+      "Authorization": token
     };
 
     try {
@@ -28,21 +31,38 @@ export class IdamClient {
     }
   }
 
-  public async authenticateRequest(req: any) {
-    const headers = {
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Authorization": req.header("Authorization")
-    };
+  public async verifyToken(token: string) {
+    const tokenString = token.split(" ")[1];
+    this.decodeToken(token)
+      .then((decodedToken: any) => {
+        this.getJwks()
+          .then(keys => {
+            const pem = jwkToPem(decodedToken);
 
-    const params = {
-      "client_id": config.idam.client,
-      "scope": "openid roles profile",
-      "response_type": "code",
-      "redirect_uri": config.idam.redirect
-    };
+            jwt.verify(tokenString, pem, {algorithms: decodedToken.alg}, (err: any, outcome: any) => {
+              if (err) {
+                throw err;
+              }
+            });
+        })
+        .catch((err) => {
+          throw err;
+        });
+      })
+      .catch((error) => {
+        throw error;
+      });
+  }
 
+  private async decodeToken(token: string) {
+    return await jwt.decode(token).then((decoded: any) => {
+      return decoded.header;
+    });
+  }
+
+  private async getJwks() {
     try {
-      const response = await this.http.post("/o/authorize", null, { headers, params });
+      const response = await this.http.get("/o/jwks");
       return response.data;
     }
     catch (err) {
