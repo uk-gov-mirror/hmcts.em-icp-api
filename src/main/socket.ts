@@ -1,6 +1,5 @@
 import { Server, Socket } from "socket.io";
 import { redisClient as redis } from "./app";
-import { Participant } from "./models/participant";
 import { IdamClient } from "./security/idam-client";
 
 const actions = require("./models/actions");
@@ -12,7 +11,7 @@ const socket = (server: Server) => {
 
   const io = socketio(server, {"origins": "*:*"} );
   io.use((client: Socket, next: () => void) => {
-    idam.verifyToken(client.handshake.query.token)
+    idam.verifyToken(client.request.headers["authorization"])
       .then(() => {
         next();
       }).catch((err => {
@@ -31,35 +30,27 @@ const socket = (server: Server) => {
             client.join(data.sessionId);
           }
 
-          // if (io.sockets.adapter.rooms[session.sessionId].length === 0) {
-          //   redis
-          //     .multi()
-          //     .set(session.caseId, "presenterId", "")
-          //     .set()
-          //     .exec((execError, results) => {});
-          //
-          //
-          //   redis.hset(session.caseId, "presenterId", "");
-          //   redis.hset(session.caseId, "presenterName", "");
-          // }
+          if (io.sockets.adapter.rooms[session.sessionId].length === 1) {
+            session.presenterName = "";
+            session.presenterId = "";
+            redis.watch(session.caseId, (watchError: any) => {
+              if (watchError) {
+                throw watchError;
+              }
+              redis.multi()
+                .hset(session.caseId, "presenterId", "")
+                .hset(session.caseId, "presenterName", "")
+                .exec((execError: any) => {
+                  if (execError) {
+                    throw execError;
+                  }
+                });
+            });
+          }
 
           io.to(client.id).emit(actions.CLIENT_JOINED,
             { client: { id: client.id, username: data.username },
                     presenter: { id: session.presenterId, username: session.presenterName }});
-
-          const newParticipant: Participant = {
-            id: client.id,
-            username: session.username
-          };
-
-          redis.lpush(data.sessionId, JSON.stringify(newParticipant), (err: string) => {
-            if (err) {
-              throw new Error();
-            }
-            redis.lrange(data.sessionId, 0, -1, (e: string, participants: string[]) => {
-              io.to(session.sessionId).emit(actions.PARTICIPANTS_UPDATED, participants);
-            });
-          });
         });
       });
 
@@ -68,8 +59,20 @@ const socket = (server: Server) => {
       });
 
       client.on(actions.UPDATE_PRESENTER, (change) => {
-        redis.hset(change.caseId, "presenterId", change.presenterId);
-        redis.hset(change.caseId, "presenterName", change.presenterName);
+        redis.watch(change.caseId, (watchError: any) => {
+          if (watchError) {
+            throw watchError;
+          }
+
+          redis.multi()
+            .hset(change.caseId, "presenterId", change.presenterId)
+            .hset(change.caseId, "presenterName", change.presenterName)
+            .exec((execError: any) => {
+              if (execError) {
+                throw execError;
+              }
+            });
+        });
 
         io.in(change.sessionId).emit(actions.PRESENTER_UPDATED, {id: change.presenterId, username: change.presenterName});
       });
@@ -81,13 +84,6 @@ const socket = (server: Server) => {
       client.on("disconnecting", () => {
         Object.keys(client.rooms)
           .forEach(room => {
-            redis.lrange(room, 0, -1, (e: string, participants: string[]) => {
-              const updatedParticipantsList = participants
-                .map(p => JSON.parse(p))
-                .filter(p => p.id !== client.id)
-                .map(p => JSON.stringify(p));
-              redis.hset(room, updatedParticipantsList);
-            });
             io.in(room).emit(actions.CLIENT_DISCONNECTED, client.id);
           });
         client.leave(client.id);
