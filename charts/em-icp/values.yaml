@@ -10,7 +10,12 @@ nodejs:
   livenessTimeout: 5
   livenessPeriod: 15
   livenessFailureThreshold: 10
-
+  environment:
+    REFORM_SERVICE_NAME: em-icp-api
+    REFORM_TEAM: em-icp-api
+    REDIS_HOST: em-icp-redis-cache-{{ .Values.global.environment }}.redis.cache.windows.net
+    REDIS_PORT: 6380
+    USE_REDIS: true
   keyVaults:
     em-icp:
       resourceGroup: em-icp
@@ -18,9 +23,6 @@ nodejs:
         - redis-password
         - microservicekey-em-icp
         - AppInsightsInstrumentationKey
-  environment:
-    REFORM_SERVICE_NAME: em-icp-api
-    REFORM_TEAM: em-icp-api
 
 redis:
   enabled: false
