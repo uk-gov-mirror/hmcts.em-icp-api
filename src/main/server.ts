@@ -10,7 +10,6 @@ const socket = require("./socket");
 const logger = Logger.getLogger("server");
 const port: number = parseInt(process.env.PORT, 10) || 8080;
 
-
 // Setup secrets before loading the app
 setupSecrets();
 

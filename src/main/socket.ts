@@ -16,7 +16,7 @@ const socket = (server: Server) => {
       .then(() => {
         next();
       }).catch((err => {
-        throw err;
+        next(err);
       }));
   }).on("connection", (client: Socket) => {
     console.log("SocketIO client connecting...");
