@@ -10,6 +10,11 @@ nodejs:
   livenessTimeout: 5
   livenessPeriod: 15
   livenessFailureThreshold: 10
+  environment:
+    REDIS_HOST: em-icp-redis-cache-{{ .Values.global.environment }}.redis.cache.windows.net
+    REDIS_PORT: 6380
+    USE_REDIS: true
+    REDIS_USE_TLS: true
 
   keyVaults:
     em-icp:
