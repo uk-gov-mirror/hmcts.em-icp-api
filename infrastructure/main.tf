@@ -70,13 +70,37 @@ resource "azurerm_key_vault_secret" "local_app_insights_key" {
   key_vault_id = "${module.local_key_vault.key_vault_id}"
 }
 
-data "azurerm_key_vault_secret" "redis_password" {
-  name      = "redis-password"
-  key_vault_id = "${data.azurerm_key_vault.rpa_vault.id}"
+
+
+#Redis
+data "azurerm_subnet" "core_infra_redis_subnet" {
+  name                 = "core-infra-subnet-1-${var.env}"
+  virtual_network_name = "core-infra-vnet-${var.env}"
+  resource_group_name = "core-infra-${var.env}"
 }
 
+module "em-icp-redis-cache" {
+  source   = "git@github.com:hmcts/cnp-module-redis?ref=master"
+  product  = "${var.product}-${var.component}-redis-cache"
+  location = "${var.location}"
+  env      = "${var.env}"
+  subnetid = "${data.azurerm_subnet.core_infra_redis_subnet.id}"
+  common_tags  = "${var.common_tags}"
+}
+
+#data "azurerm_key_vault_secret" "redis_password" {
+#  name      = "redis-password"
+#  key_vault_id = "${data.azurerm_key_vault.rpa_vault.id}"
+#}
+
+#resource "azurerm_key_vault_secret" "local_redis_password" {
+#  name         = "redis-password"
+#  value        = "${data.azurerm_key_vault_secret.redis_password.value}"
+#  key_vault_id = "${module.local_key_vault.key_vault_id}"
+#}
+
 resource "azurerm_key_vault_secret" "local_redis_password" {
-  name         = "redis-password"
-  value        = "${data.azurerm_key_vault_secret.redis_password.value}"
-  key_vault_id = "${module.local_key_vault.key_vault_id}"
+  name = "redis-password"
+  value = "${module.em-icp-redis-cache.access_key}"
+  key_vault_id = "${module.local_key_vault.id}"
 }
