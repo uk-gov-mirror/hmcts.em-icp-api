@@ -5,4 +5,4 @@ nodejs:
   ingressHost: ${SERVICE_FQDN}
 redis:
   enabled: true
-  usePassword: true
+  usePassword: false
