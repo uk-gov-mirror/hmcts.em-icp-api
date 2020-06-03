@@ -69,3 +69,14 @@ resource "azurerm_key_vault_secret" "local_app_insights_key" {
   value        = "${data.azurerm_key_vault_secret.app_insights_key.value}"
   key_vault_id = "${module.local_key_vault.key_vault_id}"
 }
+
+data "azurerm_key_vault_secret" "redis_password" {
+  name      = "redis-password"
+  key_vault_id = "${data.azurerm_key_vault.rpa_vault.id}"
+}
+
+resource "azurerm_key_vault_secret" "local_redis_password" {
+  name         = "redis-password"
+  value        = "${data.azurerm_key_vault_secret.redis_password.value}"
+  key_vault_id = "${module.local_key_vault.key_vault_id}"
+}
