@@ -16,6 +16,7 @@ const socket = (server: Server) => {
       .then(() => {
         next();
       }).catch((err => {
+        client.disconnect();
         next(err);
       }));
   }).on("connection", (client: Socket) => {
