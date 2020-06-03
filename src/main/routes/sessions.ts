@@ -29,7 +29,7 @@ router.get("/icp/sessions/:caseId", async (req, res) => {
   }
 
   const today = Date.now();
-  redis.hgetall(caseId, (e: string, session: any) => {
+  redis.hgetall(caseId, (e: string, session) => {
     if (e) {
       return res.status(500).send();
     }
