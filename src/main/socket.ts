@@ -9,19 +9,19 @@ const idam = new IdamClient();
 
 const socket = (server: Server) => {
 
-  const io = socketio(server, {"origins": "*:*"} );
-  io.use((client: Socket, next: () => void) => {
-    idam.verifyToken(client.request.headers["authorization"])
-      .then(() => {
-        next();
-      }).catch((err => {
-        throw err;
-      }));
+  const io = socketio(server, { "origins": "*:*" , path: "/icp/socket.io" } );
+  io.use(async (client: Socket, next) => {
+    try {
+      await idam.verifyToken(client.request.headers["authorization"]);
+      next();
+    } catch (e) {
+      next(new Error("Authentication error"));
+    }
   }).on("connection", (client: Socket) => {
     console.log("SocketIO client connecting...");
 
     client.on("join", (data) => {
-      redis.hgetall(data.caseId, (error: string, session: any) => {
+      redis.hgetall(data.caseId, (error: string, session) => {
         if (error || !session) {
           throw new Error();
         }
@@ -33,14 +33,14 @@ const socket = (server: Server) => {
         if (io.sockets.adapter.rooms[session.sessionId].length === 1) {
           session.presenterName = "";
           session.presenterId = "";
-          redis.watch(session.caseId, (watchError: any) => {
+          redis.watch(session.caseId, (watchError) => {
             if (watchError) {
               throw watchError;
             }
             redis.multi()
               .hset(session.caseId, "presenterId", "")
               .hset(session.caseId, "presenterName", "")
-              .exec((execError: any) => {
+              .exec((execError) => {
                 if (execError) {
                   throw execError;
                 }
@@ -59,7 +59,7 @@ const socket = (server: Server) => {
     });
 
     client.on(actions.UPDATE_PRESENTER, (change) => {
-      redis.watch(change.caseId, (watchError: any) => {
+      redis.watch(change.caseId, (watchError) => {
         if (watchError) {
           throw watchError;
         }
@@ -67,7 +67,7 @@ const socket = (server: Server) => {
         redis.multi()
           .hset(change.caseId, "presenterId", change.presenterId)
           .hset(change.caseId, "presenterName", change.presenterName)
-          .exec((execError: any) => {
+          .exec((execError) => {
             if (execError) {
               throw execError;
             }
@@ -77,7 +77,7 @@ const socket = (server: Server) => {
       io.in(change.sessionId).emit(actions.PRESENTER_UPDATED, {id: change.presenterId, username: change.presenterName});
     });
 
-    client.on("leave", (data) => {
+    client.on("leave", () => {
       client.disconnect();
     });
 
