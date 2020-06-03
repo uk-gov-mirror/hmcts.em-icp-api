@@ -10,13 +10,14 @@ const idam = new IdamClient();
 const socket = (server: Server) => {
 
   const io = socketio(server, { "origins": "*:*" , path: "/icp/socket.io" } );
-  io.use(async (client: Socket, next) => {
-    try {
-      await idam.verifyToken(client.request.headers["authorization"]);
-      next();
-    } catch (e) {
-      next(new Error("Authentication error"));
-    }
+
+  io.use((client: Socket, next) => {
+    idam.verifyToken(client.request.headers["authorization"])
+      .then(() => {
+        next();
+      }).catch((err => {
+        throw err;
+      }));
   }).on("connection", (client: Socket) => {
     console.log("SocketIO client connecting...");
 

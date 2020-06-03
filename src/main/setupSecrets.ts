@@ -1,7 +1,7 @@
 const config = require("@hmcts/properties-volume").addTo(require("config"));
 const {get, set} = require("lodash");
 
-const setSecret = (secretPath: any, configPath: any) => {
+const setSecret = (secretPath, configPath) => {
   if (config.has(secretPath)) {
     set(config, configPath, get(config, secretPath));
   }

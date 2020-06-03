@@ -27,19 +27,20 @@ export class IdamClient {
   }
 
   public async verifyToken(token: string) {
-    const tokenString = token.split(" ")[1];
-    const decodedHeader = jwtDecode(tokenString, { header: true });
-    const algorithm = await this.getJwks(decodedHeader.alg);
-    const pem = jwkToPem(algorithm);
-    return await jwt.verify(tokenString, pem, {algorithms: algorithm.alg}, (err) => {
-      if (err) {
-        throw err;
-      }
-    });
+    try {
+      const tokenString = token.split(" ")[1];
+      const decodedHeader = jwtDecode(tokenString, { header: true });
+      const algorithm = await this.getJwks(decodedHeader.alg);
+      const pem = jwkToPem(algorithm);
+      return await jwt.verify(tokenString, pem, {algorithms: algorithm.alg});
+    } catch (e) {
+      console.log("Error encountered when verifying User token");
+      throw e;
+    }
   }
 
   private async getJwks(algorithm: string) {
     const response = await this.http.get("/o/jwks");
-    return response.data.keys.find((key: any) => key.alg === algorithm);
+    return response.data.keys.find((key) => key.alg === algorithm);
   }
 }
