@@ -1,25 +1,35 @@
 import chai from "chai";
-import chaiHttp from "chai-http";
-import { app } from "../../main/app";
+const expect = require("chai").expect;
+const chaiHttp = require("chai-http");
+const request = require("superagent");
+const config = require("config");
+const frontendUrl = config.testUrl;
+
+const healthcheckRequest = (url, cb) => {
+  return request
+    .get(`${url}/health`)
+    .end((err, res) => {
+      if (err) {
+        throw err;
+      }
+      cb(res);
+    });
+};
 
 chai.use(chaiHttp);
 
 describe("ICP Server health check", () => {
   it("should return a 200 status code", done => {
-    chai.request(app)
-      .get("/health")
-      .end((err, res) => {
-        chai.expect(res.status).to.be.equal(200);
-        done();
-      });
+    healthcheckRequest(frontendUrl, res => {
+      expect(res).to.have.status(200);
+      done();
+    });
   });
 
   it("should return status UP", done => {
-    chai.request(app)
-      .get("/health")
-      .end((err, res) => {
-        chai.expect(res.body.status).to.equal("UP");
-        done();
-      });
+    healthcheckRequest(frontendUrl, res => {
+      expect(res.body.status).to.equal("UP");
+      done();
+    });
   });
 });
