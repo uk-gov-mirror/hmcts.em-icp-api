@@ -10,4 +10,5 @@ appInsights:
   instrumentationKey: APPINSIGHTS_INSTRUMENTATIONKEY
 
 s2s:
+  url: IDAM_S2S_URL
   secret: S2S_KEY
