@@ -5,6 +5,8 @@ const request = require("superagent");
 const config = require("config");
 const frontendUrl = config.testUrl;
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 const healthcheckRequest = (url, cb) => {
   return request
     .get(`${url}/health`)
