@@ -1,0 +1,19 @@
+redis:
+  host: REDIS_HOST
+  port: REDIS_PORT
+  password: REDIS_PASSWORD
+
+pact:
+  pactBrokerUrl: PACT_BROKER_URL
+
+appInsights:
+  instrumentationKey: APPINSIGHTS_INSTRUMENTATIONKEY
+
+idam:
+  url: IDAM_API_BASE_URL
+
+s2s:
+  url: IDAM_S2S_URL
+  secret: S2S_KEY
+
+testUrl: TEST_URL
