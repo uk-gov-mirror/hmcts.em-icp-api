@@ -6,6 +6,7 @@ import { RouterFinder } from "./router/routerFinder";
 import { HttpError } from "./httpError";
 import csrf from "csurf";
 
+const appInsights = require("applicationinsights");
 const config = require("config");
 const { Express, Logger } = require("@hmcts/nodejs-logging");
 const { setupDev } = require("./development");
@@ -36,6 +37,13 @@ app.locals.ENV = env;
 app.use(Express.accessLogger());
 
 const logger = Logger.getLogger("app");
+
+if (config.appInsights.instrumentationKey) {
+  appInsights.setup(config.appInsights.instrumentationKey)
+    .setAutoCollectConsole(true, true)
+    .start();
+  appInsights.defaultClient.trackTrace({message: "App insights activated"});
+}
 
 app.use(noCache());
 app.use(helmet());
