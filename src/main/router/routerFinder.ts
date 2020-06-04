@@ -1,10 +1,10 @@
-import { Router } from 'express';
-const requireDirectory = require('require-directory');
-const options: object = {
-  extensions: ['ts', 'js'],
+import { Router } from "express";
+const requireDirectory = require("require-directory");
+const options = {
+  extensions: ["ts", "js"],
   recurse: true,
   visit: (obj: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
-    return typeof obj === 'object' && obj.default !== undefined
+    return typeof obj === "object" && obj.default !== undefined
       ? obj.default
       : obj;
   },
