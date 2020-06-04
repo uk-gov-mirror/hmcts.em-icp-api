@@ -5,9 +5,9 @@ import { UserInfo } from "../models/userInfo";
 import { redisClient as redis } from "../app";
 import { IdamClient } from "../security/idam-client";
 const router = express.Router();
+const idam = new IdamClient();
 
 router.get("/icp/sessions/:caseId", async (req, res) => {
-  const idam = new IdamClient();
   const token = req.header("Authorization");
   if (!token) {
     return res.status(401).send({error: "Unauthorized user"});
