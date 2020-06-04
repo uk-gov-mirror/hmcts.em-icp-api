@@ -9,6 +9,9 @@ service:
 app:
   useCSRFProtection: "true"
 
+appInsights:
+  instrumentationKey: "dummy_key"
+
 idam:
   url: "http://localhost:5000"
 
