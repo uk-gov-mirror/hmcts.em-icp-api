@@ -2,12 +2,15 @@
 
 
 ### Run locally
-Setup local Redis instance (on Mac):
+Setup dependencies using Docker Compose:
 ```
-$ redis-server
+$ az login
+$ az acr login --name hmctspublic && az acr login --name hmctsprivate
+$ docker-compose -f docker-compose-dependencies.yml pull
+
 ```
 
-Once Redis is running, open another terminal and start the Node js server:
+Once the Docker containers have started, open another terminal and start the Node js server:
 ```
 $ npm start
 ```
