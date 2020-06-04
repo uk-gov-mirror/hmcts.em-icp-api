@@ -72,29 +72,6 @@ services:
     ports:
       - 5000:5000
 
-  idam-web-public:
-    image: hmctspublic.azurecr.io/idam/web-public:stable
-    container_name: icp-idam-web-public-api
-    environment:
-      - JAVA_OPTS=-Xms128m -Xms512m
-      - STRATEGIC_SERVICE_URL=http://idam-api:5000
-    ports:
-      - 9002:8080
-    depends_on:
-      - idam-api
-
-  idam-web-admin:
-    image: hmctspublic.azurecr.io/idam/web-admin:stable
-    container_name: icp-idam-web-admin-api
-    environment:
-      - JAVA_OPTS=-Xms128m -Xms512m
-      - STRATEGIC_SERVICE_URL=http://idam-api:5000
-      - STRATEGIC_PUBLIC_URL=http://idam-web-public:9002
-    ports:
-      - 8082:8080
-    depends_on:
-      - idam-api
-
   fr-am:
     image: hmctsprivate.azurecr.io/idam/idam-fr-am:latest
     container_name: icp-fr-am
