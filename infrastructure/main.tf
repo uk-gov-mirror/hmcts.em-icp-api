@@ -65,7 +65,7 @@ data "azurerm_key_vault_secret" "app_insights_key" {
 }
 
 resource "azurerm_key_vault_secret" "local_app_insights_key" {
-  name         = "AppInsightsInstrumentationKey"
+  name         = "AppInsightsInstrumentationKey2"
   value        = "${data.azurerm_key_vault_secret.app_insights_key.value}"
   key_vault_id = "${module.local_key_vault.key_vault_id}"
 }
