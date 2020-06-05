@@ -4,18 +4,23 @@ import { Session } from "../models/session";
 import { UserInfo } from "../models/userInfo";
 import { redisClient as redis } from "../app";
 import { IdamClient } from "../security/idam-client";
+const { Logger } = require("@hmcts/nodejs-logging");
 const router = express.Router();
 const idam = new IdamClient();
+const logger = Logger.getLogger("sessions");
+
 
 router.get("/icp/sessions/:caseId", async (req, res) => {
   const token = req.header("Authorization");
   if (!token) {
+    logger.error("No Authorization header found");
     return res.status(401).send({error: "Unauthorized user"});
   }
 
   try {
     await idam.verifyToken(token);
   } catch (e) {
+    logger.error(e);
     return res.status(401).send({error: e});
   }
 
@@ -24,6 +29,7 @@ router.get("/icp/sessions/:caseId", async (req, res) => {
   const caseId: string = req.params.caseId;
 
   if (!caseId || caseId === "null" || caseId === "undefined") {
+    logger.error("Invalid case id");
     res.statusMessage = "Invalid case id";
     return res.status(400).send();
   }

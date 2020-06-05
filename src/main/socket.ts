@@ -2,9 +2,11 @@ import { Server, Socket } from "socket.io";
 import { redisClient as redis } from "./app";
 import { IdamClient } from "./security/idam-client";
 
+const { Logger } = require("@hmcts/nodejs-logging");
 const actions = require("./models/actions");
 const socketio = require("socket.io");
 
+const logger = Logger.getLogger("socket");
 const idam = new IdamClient();
 
 const socket = (server: Server) => {
@@ -16,6 +18,7 @@ const socket = (server: Server) => {
       .then(() => {
         next();
       }).catch((err => {
+        logger.error(err);
         client.disconnect();
         next(err);
       }));

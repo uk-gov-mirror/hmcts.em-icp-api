@@ -4,6 +4,8 @@ const config = require("config");
 const jwt = require("jsonwebtoken");
 const jwkToPem = require("jwk-to-pem");
 const jwtDecode = require("jwt-decode");
+const { Logger } = require("@hmcts/nodejs-logging");
+const logger = Logger.getLogger("idam-client");
 
 /**
  * IDAM client that handles token authentication
@@ -34,6 +36,7 @@ export class IdamClient {
       const pem = jwkToPem(algorithm);
       return await jwt.verify(tokenString, pem, {algorithms: algorithm.alg});
     } catch (e) {
+      logger.error(e);
       console.log("Error encountered when verifying User token");
       throw e;
     }
