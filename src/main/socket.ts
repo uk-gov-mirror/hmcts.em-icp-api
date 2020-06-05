@@ -53,6 +53,8 @@ const socket = (server: Server) => {
         io.to(client.id).emit(actions.CLIENT_JOINED,
           { client: { id: client.id, username: data.username },
             presenter: { id: session.presenterId, username: session.presenterName }});
+
+        io.to(session.sessionId).emit(actions.NEW_PARTICIPANT_JOINED);
       });
     });
 
