@@ -6,7 +6,6 @@ const router = express.Router();
 
 const healthCheckConfig = {
   checks: {
-    // add one for idam / forgerock (auth service)
     redis: healthcheck.raw(() => {
       return redis.connected ? healthcheck.up() : healthcheck.down();
     }),
