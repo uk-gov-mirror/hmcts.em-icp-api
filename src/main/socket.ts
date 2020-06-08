@@ -14,6 +14,7 @@ const socket = (server: Server) => {
   const io = socketio(server, { "origins": "*:*" , path: "/icp/socket.io" } );
 
   io.use((client: Socket, next) => {
+    logger.info("Socket connect endpoint: Verify the auth token...");
     idam.verifyToken(client.request.headers["authorization"])
       .then(() => {
         next();
