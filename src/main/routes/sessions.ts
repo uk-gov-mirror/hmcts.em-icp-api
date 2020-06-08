@@ -17,19 +17,13 @@ router.get("/icp/sessions/:caseId", async (req, res) => {
   logger.info("Redis setting test 1");
   await redis.set("test1", "bar");
   logger.info("Redis getting test1");
-  await redis.get("test1", (e, val) => {
-    logger.info("Get Error: ", e);
-    logger.info("Value: ", val);
-  });
+  await redis.get("test1", redis.print);
 
 
   logger.info("Redis setting foo");
   await redis.hmset("foo", {val: "hi", val2: "test"});
   logger.info("Redis getting foo");
-  await redis.hgetall("foo", (e, val) => {
-    logger.info("Get Error: ", e);
-    logger.info("Value: ", val);
-  });
+  await redis.hgetall("foo", redis.print);
 
 
   const token = req.header("Authorization");
@@ -60,7 +54,7 @@ router.get("/icp/sessions/:caseId", async (req, res) => {
 
   logger.info("Session endpoint: Accessing Redis session info...");
   const today = Date.now();
-  await redis.hgetall(caseId, (e: string, session) => {
+  await redis.hgetall(caseId, (e, session) => {
     logger.info("Error?: ", e);
     logger.info("Session?: ", session);
     if (e) {
