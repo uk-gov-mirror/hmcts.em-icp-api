@@ -9,9 +9,9 @@ const setSecret = (secretPath, configPath) => {
 
 const setupSecrets = () => {
   if (config.has("secrets.icp")) {
-    setSecret("secrets.icp.redis-password", "redis.password");
-    setSecret("secrets.icp.microservicekey-em-icp", "s2s.secret");
-    setSecret("secrets.icp.AppInsightsInstrumentationKey", "appInsights.instrumentationKey");
+    setSecret("secrets.em-icp.redis-password", "redis.password");
+    setSecret("secrets.em-icp.microservicekey-em-icp", "s2s.secret");
+    setSecret("secrets.em-icp.AppInsightsInstrumentationKey", "appInsights.instrumentationKey");
   }
 };
 
