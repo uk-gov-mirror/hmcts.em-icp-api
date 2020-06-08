@@ -10,18 +10,18 @@ const appInsights = require("applicationinsights");
 const config = require("config");
 const { Express, Logger } = require("@hmcts/nodejs-logging");
 const { setupDev } = require("./development");
-const redis = require("redis");
+const Redis = require("ioredis");
 const healthcheck = require("./routes/health");
 const helmet = require("helmet");
 const noCache = require("nocache");
 const env = process.env.NODE_ENV || "development";
 const developmentMode = env === "development";
 
-export const redisClient = redis.createClient({
-  host : config.redis.host,
-  port : config.redis.port,
-  password: config.redis.password,
-});
+export const redisClient = new Redis(
+  config.redis.port,
+  config.redis.host,
+  { password: config.redis.password },
+);
 
 redisClient.on("ready", () => {
   console.log("Redis is ready");
