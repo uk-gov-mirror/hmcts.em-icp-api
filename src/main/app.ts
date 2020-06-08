@@ -17,13 +17,15 @@ const noCache = require("nocache");
 const env = process.env.NODE_ENV || "development";
 const developmentMode = env === "development";
 
+const logger = Logger.getLogger("app");
+
 const tlsOptions = {
   password: config.redis.password,
   tls: true,
 };
 
 const redisOptions = config.redis.useTLS === "true" ? tlsOptions : {};
-
+logger.info("Redis password:", config.redis.password);
 export const redisClient = new Redis(config.redis.port, config.redis.host, redisOptions);
 
 redisClient.on("ready", () => {
@@ -39,7 +41,6 @@ app.locals.ENV = env;
 
 app.use(Express.accessLogger());
 
-const logger = Logger.getLogger("app");
 
 if (config.appInsights.instrumentationKey) {
   appInsights.setup(config.appInsights.instrumentationKey)
