@@ -24,8 +24,10 @@ export class IdamClient {
     const headers = {
       "Authorization": token,
     };
+    console.log("Idam Client: Getting user info...");
     logger.info("Idam Client: Getting user info...");
     const response = await this.http.get("/o/userinfo", { headers });
+    console.log("Idam Client: User info returned...");
     logger.info("Idam Client: User info returned...");
     return response.data;
   }
@@ -36,6 +38,7 @@ export class IdamClient {
       const decodedHeader = jwtDecode(tokenString, { header: true });
       const algorithm = await this.getJwks(decodedHeader.alg);
       const pem = jwkToPem(algorithm);
+      console.log("Idam Client: Verify the auth token...");
       logger.info("Idam Client: Verify the auth token...");
       return await jwt.verify(tokenString, pem, {algorithms: algorithm.alg});
     } catch (e) {
