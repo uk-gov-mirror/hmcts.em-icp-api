@@ -12,14 +12,25 @@ const logger = Logger.getLogger("sessions");
 
 router.get("/icp/sessions/:caseId", async (req, res) => {
   logger.info("Session endpoint: Have reached the session endpoint...");
-  logger.info("Redis setting foo");
-  await redis.set("foo", "bar");
+
+
   logger.info("Redis setting test 1");
   await redis.set("test1", "bar");
-  logger.info("Redis setting test 2");
-  await redis.set("test2", "bar");
-  logger.info("Redis setting test3");
-  await redis.set("test3", "bar");
+  logger.info("Redis getting test1");
+  await redis.get("test1", (e, val) => {
+    logger.info("Get Error: ", e);
+    logger.info("Value: ", val);
+  });
+
+
+  logger.info("Redis setting foo");
+  await redis.hmset("foo", {val: "hi", val2: "test"});
+  logger.info("Redis getting foo");
+  await redis.hgetall("foo", (e, val) => {
+    logger.info("Get Error: ", e);
+    logger.info("Value: ", val);
+  });
+
 
   const token = req.header("Authorization");
   if (!token) {
