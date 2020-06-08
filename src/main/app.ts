@@ -20,7 +20,7 @@ const developmentMode = env === "development";
 
 propertiesVolume.addTo(config);
 
-const REDIS_PASSWORD = config.secrets ? config.secrets["em-icp"]["show-oauth2-token"] : undefined;
+const REDIS_PASSWORD = config.secrets ? config.secrets["em-icp"]["redis-password"] : undefined;
 const APP_INSIGHTS_KEY = config.secrets ? config.secrets["em-icp"]["AppInsightsInstrumentationKey"] : undefined;
 
 const logger = Logger.getLogger("app");
