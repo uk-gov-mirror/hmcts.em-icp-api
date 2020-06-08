@@ -48,6 +48,8 @@ router.get("/icp/sessions/:caseId", async (req, res) => {
   logger.info("Session endpoint: Accessing Redis session info...");
   const today = Date.now();
   redis.hgetall(caseId, (e: string, session) => {
+    logger.info("Error?: ", e);
+    logger.info("Session?: ", session);
     if (e) {
       return res.status(500).send();
     }
