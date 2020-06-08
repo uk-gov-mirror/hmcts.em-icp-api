@@ -17,6 +17,8 @@ router.get("/icp/sessions/:caseId", async (req, res) => {
     return res.status(401).send({error: "Unauthorized user"});
   }
 
+  logger.info("Session endpoint: Verify the auth token...");
+
   try {
     await idam.verifyToken(token);
   } catch (e) {
@@ -24,6 +26,7 @@ router.get("/icp/sessions/:caseId", async (req, res) => {
     return res.status(401).send({error: e});
   }
 
+  logger.info("Session endpoint: Getting user info...");
   const userInfo: UserInfo = await idam.getUserInfo(token);
   const username = userInfo.name;
   const caseId: string = req.params.caseId;
@@ -34,6 +37,7 @@ router.get("/icp/sessions/:caseId", async (req, res) => {
     return res.status(400).send();
   }
 
+  logger.info("Session endpoint: Accessing Redis session info...");
   const today = Date.now();
   redis.hgetall(caseId, (e: string, session) => {
     if (e) {
@@ -48,13 +52,14 @@ router.get("/icp/sessions/:caseId", async (req, res) => {
         presenterId: "",
         presenterName: "",
       };
-
+      logger.info("Session endpoint: Creating a new session object...");
       redis.hmset(caseId, newSession);
       return res.send({
         username: username,
         session: {sessionId: newSession.sessionId, caseId: newSession.caseId, dateOfHearing: newSession.dateOfHearing},
       });
     } else if (new Date(parseInt(session.dateOfHearing)).toDateString() === new Date(today).toDateString()) {
+      logger.info("Session endpoint: Returning an existing session object...");
       return res.send({
         username: username,
         session: {sessionId: session.sessionId, caseId: session.caseId, dateOfHearing: session.dateOfHearing},
