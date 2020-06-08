@@ -41,8 +41,10 @@ const logger = Logger.getLogger("app");
 if (config.appInsights.instrumentationKey) {
   appInsights.setup(config.appInsights.instrumentationKey)
     .setAutoCollectConsole(true, true)
+    .setDistributedTracingMode(appInsights.DistributedTracingModes.AI_AND_W3C)
+    .setSendLiveMetrics(true)
     .start();
-  appInsights.defaultClient.trackTrace({message: "App insights activated"});
+  appInsights.defaultClient.context.tags[appInsights.defaultClient.context.keys.cloudRole] = "em-icp";
 }
 
 app.use(noCache());
