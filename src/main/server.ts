@@ -5,13 +5,9 @@ import * as https from "https";
 import * as path from "path";
 import { app } from "./app";
 
-const setupSecrets = require("./setupSecrets");
 const socket = require("./socket");
 const logger = Logger.getLogger("server");
 const port: number = parseInt(process.env.PORT, 10) || 8080;
-
-// Setup secrets before loading the app
-setupSecrets();
 
 if (app.locals.ENV === "development") {
   const sslDirectory = path.join(__dirname, "resources", "localhost-ssl");

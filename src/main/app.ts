@@ -5,6 +5,7 @@ import * as path from "path";
 import { RouterFinder } from "./router/routerFinder";
 import { HttpError } from "./httpError";
 import csrf from "csurf";
+import * as propertiesVolume from "@hmcts/properties-volume";
 
 const appInsights = require("applicationinsights");
 const config = require("config");
@@ -17,10 +18,15 @@ const noCache = require("nocache");
 const env = process.env.NODE_ENV || "development";
 const developmentMode = env === "development";
 
+propertiesVolume.addTo(config);
+
+const REDIS_PASSWORD = config.secrets ? config.secrets["em-icp"]["show-oauth2-token"] : undefined;
+const APP_INSIGHTS_KEY = config.secrets ? config.secrets["em-icp"]["AppInsightsInstrumentationKey"] : undefined;
+
 const logger = Logger.getLogger("app");
 
 const tlsOptions = {
-  password: config.redis.password,
+  password: REDIS_PASSWORD,
   tls: true,
 };
 
@@ -41,9 +47,8 @@ app.locals.ENV = env;
 
 app.use(Express.accessLogger());
 
-
-if (config.appInsights.instrumentationKey) {
-  appInsights.setup(config.appInsights.instrumentationKey)
+if (APP_INSIGHTS_KEY) {
+  appInsights.setup(APP_INSIGHTS_KEY)
     .setAutoCollectConsole(true, true)
     .setDistributedTracingMode(appInsights.DistributedTracingModes.AI_AND_W3C)
     .setSendLiveMetrics(true)
