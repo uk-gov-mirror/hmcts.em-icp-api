@@ -1,5 +1,6 @@
 import Axios, { AxiosInstance } from "axios";
 import { UserInfo } from "../models/userInfo";
+
 const config = require("config");
 const jwt = require("jsonwebtoken");
 const jwkToPem = require("jwk-to-pem");
@@ -24,9 +25,7 @@ export class IdamClient {
     const headers = {
       "Authorization": token,
     };
-    logger.info("Idam Client: Getting user info...");
     const response = await this.http.get("/o/userinfo", { headers });
-    logger.info("Idam Client: User info returned...");
     return response.data;
   }
 
@@ -36,7 +35,6 @@ export class IdamClient {
       const decodedHeader = jwtDecode(tokenString, { header: true });
       const algorithm = await this.getJwks(decodedHeader.alg);
       const pem = jwkToPem(algorithm);
-      logger.info("Idam Client: Verify the auth token...");
       return await jwt.verify(tokenString, pem, {algorithms: algorithm.alg});
     } catch (e) {
       logger.error("Idam Client: Error encountered when verifying User token");

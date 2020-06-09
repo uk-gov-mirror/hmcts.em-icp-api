@@ -29,9 +29,7 @@ const tlsOptions = {
   password: REDIS_PASSWORD,
   tls: true,
 };
-
 const redisOptions = config.redis.useTLS === "true" ? tlsOptions : {};
-logger.info("Redis password:", config.redis.password);
 export const redisClient = new Redis(config.redis.port, config.redis.host, redisOptions);
 
 redisClient.on("ready", () => {
