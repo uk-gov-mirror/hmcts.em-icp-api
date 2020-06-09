@@ -14,7 +14,6 @@ const socket = (server: Server) => {
   const io = socketio(server, { "origins": "*:*" , path: "/icp/socket.io" } );
 
   io.use((client: Socket, next) => {
-    logger.info("Socket connect endpoint: Verify the auth token...");
     idam.verifyToken(client.request.headers["authorization"])
       .then(() => {
         next();
@@ -24,12 +23,13 @@ const socket = (server: Server) => {
         next(err);
       }));
   }).on("connection", (client: Socket) => {
-    console.log("SocketIO client connecting...");
+    logger.info("SocketIO client connecting...");
 
     client.on("join", (data) => {
       redis.hgetall(data.caseId, (error: string, session) => {
         if (error || !session) {
-          throw new Error();
+          logger.error(error);
+          throw error;
         }
 
         if (session.sessionId === data.sessionId) {
@@ -41,6 +41,7 @@ const socket = (server: Server) => {
           session.presenterId = "";
           redis.watch(session.caseId, (watchError) => {
             if (watchError) {
+              logger.error("Error watching caseId: ", watchError);
               throw watchError;
             }
             redis.multi()
@@ -48,6 +49,7 @@ const socket = (server: Server) => {
               .hset(session.caseId, "presenterName", "")
               .exec((execError) => {
                 if (execError) {
+                  logger.error("Error executing changes in Redis: ", execError);
                   throw execError;
                 }
               });
@@ -69,6 +71,7 @@ const socket = (server: Server) => {
     client.on(actions.UPDATE_PRESENTER, (change) => {
       redis.watch(change.caseId, (watchError) => {
         if (watchError) {
+          logger.error("Error watching caseId: ", watchError);
           throw watchError;
         }
 
@@ -77,6 +80,7 @@ const socket = (server: Server) => {
           .hset(change.caseId, "presenterName", change.presenterName)
           .exec((execError) => {
             if (execError) {
+              logger.error("Error executing changes in Redis: ", execError);
               throw execError;
             }
           });
@@ -96,7 +100,7 @@ const socket = (server: Server) => {
         });
       client.leave(client.id);
 
-      console.log("SocketIO client disconnecting");
+      logger.info("SocketIO client disconnecting");
     });
   });
 };
