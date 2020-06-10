@@ -37,7 +37,7 @@ router.get("/icp/sessions/:caseId", async (req, res) => {
   const today = Date.now();
   await redis.hgetall(caseId, (e, session) => {
     if (e) {
-      return res.status(500).send();
+      return res.status(500).send({error: e});
     }
 
     if (!session || new Date(parseInt(session.dateOfHearing)).toDateString() !== new Date(today).toDateString()) {
