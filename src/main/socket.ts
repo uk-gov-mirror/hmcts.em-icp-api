@@ -5,6 +5,7 @@ import { IdamClient } from "./security/idam-client";
 const { Logger } = require("@hmcts/nodejs-logging");
 const actions = require("./models/actions");
 const socketio = require("socket.io");
+const redisAdapter = require("socket.io-redis");
 
 const logger = Logger.getLogger("socket");
 const idam = new IdamClient();
@@ -12,6 +13,9 @@ const idam = new IdamClient();
 const socket = (server: Server) => {
 
   const io = socketio(server, { "origins": "*:*" , path: "/icp/socket.io" } );
+  const pub = redis;
+  const sub = redis;
+  io.adapter(redisAdapter({ pubClient: pub, subClient: sub }));
 
   io.use((client: Socket, next) => {
     idam.verifyToken(client.request.headers["authorization"])
