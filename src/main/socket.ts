@@ -1,51 +1,16 @@
 import { Server, Socket } from "socket.io";
 import { redisClient as redis } from "./app";
 import { IdamClient } from "./security/idam-client";
-import * as propertiesVolume from "@hmcts/properties-volume";
 
-const Redis = require("ioredis");
-const config = require("config");
 const { Logger } = require("@hmcts/nodejs-logging");
 const actions = require("./models/actions");
 const socketio = require("socket.io");
-const redisAdapter = require("socket.io-redis");
 
 const logger = Logger.getLogger("socket");
 const idam = new IdamClient();
 
-propertiesVolume.addTo(config);
-
-const REDIS_PASSWORD = config.secrets ? config.secrets["em-icp"]["redis-password"] : undefined;
-
-
 const socket = (server: Server) => {
   const io = socketio(server, { "origins": "*:*" , path: "/icp/socket.io" } );
-
-  const tlsOptions = {
-    auth_pass: REDIS_PASSWORD,
-    tls: true,
-  };
-  const redisOptions = config.redis.useTLS === "true" ? tlsOptions : {};
-  const pub = new Redis(config.redis.port, config.redis.host, redisOptions);
-  const sub = new Redis(config.redis.port, config.redis.host, redisOptions);
-
-  pub.on("ready", () => {
-    console.log("Pub Redis is ready");
-  });
-
-  pub.on("error", (err: { message: string; }) => {
-    console.log("Error in Pub Redis: ", err.message);
-  });
-
-  sub.on("ready", () => {
-    console.log("Sub Redis is ready");
-  });
-
-  sub.on("error", (err: { message: string; }) => {
-    console.log("Error in Sub Redis: ", err.message);
-  });
-
-  io.adapter(redisAdapter({ pubClient: pub, subClient: sub }));
 
   io.use((client: Socket, next) => {
     idam.verifyToken(client.request.headers["authorization"])
