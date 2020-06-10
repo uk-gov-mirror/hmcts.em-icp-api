@@ -37,6 +37,7 @@ router.get("/icp/sessions/:caseId", async (req, res) => {
   const today = Date.now();
   await redis.hgetall(caseId, (e, session) => {
     if (e) {
+      res.statusMessage = "Error accessing data from Redis";
       return res.status(500).send({error: e});
     }
 
