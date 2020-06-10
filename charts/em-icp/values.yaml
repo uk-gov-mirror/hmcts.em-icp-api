@@ -33,3 +33,6 @@ redis:
     enabled: false
     slaveCount: 0
   usePassword: false
+
+tags:
+  pr: false
