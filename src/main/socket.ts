@@ -28,6 +28,23 @@ const socket = (server: Server) => {
   const redisOptions = config.redis.useTLS === "true" ? tlsOptions : {};
   const pub = new Redis(config.redis.port, config.redis.host, redisOptions);
   const sub = new Redis(config.redis.port, config.redis.host, redisOptions);
+
+  pub.on("ready", () => {
+    console.log("Pub Redis is ready");
+  });
+
+  pub.on("error", (err: { message: string; }) => {
+    console.log("Error in Pub Redis: ", err.message);
+  });
+
+  sub.on("ready", () => {
+    console.log("Sub Redis is ready");
+  });
+
+  sub.on("error", (err: { message: string; }) => {
+    console.log("Error in Sub Redis: ", err.message);
+  });
+
   io.adapter(redisAdapter({ pubClient: pub, subClient: sub }));
 
   io.use((client: Socket, next) => {
