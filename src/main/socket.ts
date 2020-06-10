@@ -10,7 +10,6 @@ const logger = Logger.getLogger("socket");
 const idam = new IdamClient();
 
 const socket = (server: Server) => {
-
   const io = socketio(server, { "origins": "*:*" , path: "/icp/socket.io" } );
 
   io.use((client: Socket, next) => {

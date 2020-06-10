@@ -1,7 +1,9 @@
 # In Court Presentation API
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+The In Court Presentation API is a Node Js backend server application that facilitates the creation and management of In Court Presentation sessions initiated from the Media Viewer.
 
-### Run locally
+### Setup and running locally
 Setup dependencies using Docker Compose:
 ```
 $ az login
@@ -10,7 +12,27 @@ $ docker-compose -f docker-compose-dependencies.yml pull
 $ docker-compose -f docker-compose-dependencies.yml up
 ```
 
-Once the Docker containers have started, open another terminal and start the Node js server:
+Once the Docker containers have started, open another terminal, install the project dependencies and start the Node js server:
 ```
-$ npm start
+$ yarn install
+$ yarn start
 ```
+
+To run the unit tests run the following command:
+```
+$ yarn test
+```
+
+## Swagger UI
+To view our REST API go to {HOST}:{PORT}/swagger
+> http://localhost:8080/swagger
+
+## Tech
+
+The ICP API uses the following technologies:
+
+- Node (v12.0.0)
+- Redis
+- Express
+- Chai (For testing)
+- Mocho (For testing)
