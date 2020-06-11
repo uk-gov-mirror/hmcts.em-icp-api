@@ -6,4 +6,5 @@ module.exports = {
   PRESENTER_UPDATED: "[Icp] Presenter Updated",
   UPDATE_PRESENTER: "[Icp] New Presenter Starts Presenting",
   CLIENT_DISCONNECTED: "[Icp] Client Disconnected From Session",
+  NEW_PARTICIPANT_JOINED: "[Icp] New Participant Joined Session",
 };
