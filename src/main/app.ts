@@ -6,7 +6,7 @@ import { RouterFinder } from "./router/routerFinder";
 import { HttpError } from "./httpError";
 import csrf from "csurf";
 import * as propertiesVolume from "@hmcts/properties-volume";
-import {swaggerDocument} from "./swagger";
+import { swaggerDocument } from "../../documentation/swagger";
 
 const appInsights = require("applicationinsights");
 const swaggerUi = require("swagger-ui-express");
