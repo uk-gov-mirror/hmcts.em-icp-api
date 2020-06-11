@@ -5,10 +5,6 @@ export const swaggerDocument = {
     version: "1.0.0",
     title: "In Court Presentation API",
     description: "A Node Js Application that facilitates the creation, management and hosting of In Court Presentation sessions on a web socket server",
-    license: {
-      name: "Apache 2.0",
-      url: "https://www.apache.org/licenses/LICENSE-2.0.html",
-    },
   },
   paths: {
     "/health": {
@@ -27,14 +23,27 @@ export const swaggerDocument = {
               "$ref": "#/definitions/Health",
             },
           },
-          500: {
-            "$ref": "#/responses/500",
-          },
         },
       },
     },
     "/icp/sessions/:caseId": {
       get: {
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Users Auth token",
+            "required": true,
+            "type": "string",
+          },
+          {
+            "name": "caseId",
+            "in": "path",
+            "description": "Case ID that ICP session relates to",
+            "required": true,
+            "type": "string",
+          },
+        ],
         summary: "Check whether an In Court Presentation session exists for provided case id, if one does return it, else create one and return it",
         consumes: [
           "application/json",
@@ -82,6 +91,29 @@ export const swaggerDocument = {
                 "UP",
                 "DOWN",
               ],
+            },
+          },
+        },
+        "buildInfo": {
+          "type": "object",
+          "properties": {
+            "environment": {
+              "type": "string",
+            },
+            "project": {
+              "type": "string",
+            },
+            "name": {
+              "type": "string",
+            },
+            "version": {
+              "type": "string",
+            },
+            "commit": {
+              "type": "string",
+            },
+            "date": {
+              "type": "string",
             },
           },
         },
