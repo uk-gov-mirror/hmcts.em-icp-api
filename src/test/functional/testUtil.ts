@@ -1,22 +1,18 @@
-import Axios, {AxiosInstance} from "axios";
+import axios, {AxiosInstance} from "axios";
 import * as propertiesVolume from "@hmcts/properties-volume";
 
 const config = require("config");
 const url = require("url");
+const frontendURL = process.env.TEST_URL || "http://localhost:8080";
 
 propertiesVolume.addTo(config);
 
 export class TestUtil {
 
-  private readonly http: AxiosInstance;
   private readonly idamHttp: AxiosInstance;
 
   constructor() {
-    this.http = Axios.create({
-      baseURL: process.env.TEST_URL || "http://localhost:8080",
-    });
-
-    this.idamHttp = Axios.create({
+    this.idamHttp = axios.create({
       baseURL: process.env["IDAM_API_BASE_URL"] || "http://localhost:5000",
     });
   }
@@ -25,7 +21,7 @@ export class TestUtil {
     const headers = {
       "Authorization": `Bearer ${token}`,
     };
-    const response = await this.http.get(`/icp/sessions/${caseId}`, { headers: headers });
+    const response = await axios.get(`${frontendURL}/icp/sessions/${caseId}`, { headers: headers });
     return response.data;
   }
 
