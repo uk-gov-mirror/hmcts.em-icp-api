@@ -31,7 +31,6 @@ describe("/GET sessions", () => {
     await axios.get(`${frontendURL}/icp/sessions/${caseId}`, { headers: headers })
       .catch((err) => {
         if (err) {
-          console.log(err);
           chai.expect(err.response.status).equal(401);
           chai.expect(err.response.statusText).equal("Unauthorized");
         }

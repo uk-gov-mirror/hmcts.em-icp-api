@@ -1,21 +1,14 @@
-import axios, {AxiosInstance} from "axios";
+import axios from "axios";
 import * as propertiesVolume from "@hmcts/properties-volume";
 
 const config = require("config");
 const url = require("url");
 const frontendURL = process.env.TEST_URL || "http://localhost:8080";
+const idamUrl = process.env.IDAM_API_BASE_URL || "http://localhost:5000";
 
 propertiesVolume.addTo(config);
 
 export class TestUtil {
-
-  private readonly idamHttp: AxiosInstance;
-
-  constructor() {
-    this.idamHttp = axios.create({
-      baseURL: process.env["IDAM_API_BASE_URL"] || "http://localhost:5000",
-    });
-  }
 
   async createIcpSession(token: string, caseId: string) {
     const headers = {
@@ -26,7 +19,7 @@ export class TestUtil {
   }
 
   async createNewUser(username: string, password: string) {
-    await this.idamHttp.delete("/testing-support/accounts/b@a.com");
+    await axios.delete(`${idamUrl}/testing-support/accounts/b@a.com`);
     const userInfo = {
       "email": username,
       "forename": "John",
@@ -40,7 +33,7 @@ export class TestUtil {
     };
 
     try {
-      await this.idamHttp.post("/testing-support/accounts", userInfo);
+      await axios.post(`${idamUrl}/testing-support/accounts`, userInfo);
     } catch (err) {
       console.log("error creating new user");
       throw err;
@@ -54,13 +47,13 @@ export class TestUtil {
     const params = new url.URLSearchParams();
     params.append("scope", "openid roles profile");
     params.append("grant_type", "password");
-    params.append("redirect_uri", process.env["FUNCTIONAL_TEST_CLIENT_OAUTH_SECRET"] || "http://localhost:8080/oauth2redirect");
+    params.append("redirect_uri", process.env.FUNCTIONAL_TEST_CLIENT_OAUTH_SECRET || "http://localhost:8080/oauth2redirect");
     params.append("client_id", "webshow");
-    params.append("client_secret", process.env["IDAM_API_BASE_URL"] || "AAAAAAAAAAAAAAAA");
+    params.append("client_secret", process.env.IDAM_WEBSHOW_WHITELIST || "AAAAAAAAAAAAAAAA");
     params.append("username", username);
     params.append("password", password);
     try {
-      const response = await this.idamHttp.post("/o/token", params, { headers });
+      const response = await axios.post(`${idamUrl}/o/token`, params, { headers });
       return response.data["access_token"];
     } catch (err) {
       console.log("error fetching token");
