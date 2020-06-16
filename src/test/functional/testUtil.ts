@@ -14,12 +14,21 @@ export class TestUtil {
     const headers = {
       "Authorization": `Bearer ${token}`,
     };
-    const response = await axios.get(`${frontendURL}/icp/sessions/${caseId}`, { headers: headers });
-    return response.data;
+
+    try {
+      const response = await axios.get(`${frontendURL}/icp/sessions/${caseId}`, { headers: headers });
+      return response.data;
+    } catch (err) {
+      console.log(err);
+      console.log("error creating new icp session");
+      throw err;
+    }
   }
 
   async createNewUser(username: string, password: string) {
-    await axios.delete(`${idamUrl}/testing-support/accounts/b@a.com`);
+    console.log(idamUrl);
+    console.log(frontendURL);
+    await axios.delete(`${idamUrl}/testing-support/accounts/b@a.com`).catch(err => console.log(err));
     const userInfo = {
       "email": username,
       "forename": "John",
@@ -33,8 +42,9 @@ export class TestUtil {
     };
 
     try {
-      await axios.post(`${idamUrl}/testing-support/accounts`, userInfo);
+      await axios.post(`${idamUrl}/testing-support/accounts`, userInfo).catch(err => console.log(err));
     } catch (err) {
+      console.log(err);
       console.log("error creating new user");
       throw err;
     }
@@ -53,9 +63,11 @@ export class TestUtil {
     params.append("username", username);
     params.append("password", password);
     try {
+      console.log(idamUrl);
       const response = await axios.post(`${idamUrl}/o/token`, params, { headers });
       return response.data["access_token"];
     } catch (err) {
+      console.log(err);
       console.log("error fetching token");
       throw err;
     }

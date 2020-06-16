@@ -4,8 +4,6 @@ import chai from "chai";
 
 const testUtil = new TestUtil();
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
 const frontendURL = process.env.TEST_URL || "http://localhost:8080";
 const username = "b@a.com";
 const password = "***REMOVED***";
