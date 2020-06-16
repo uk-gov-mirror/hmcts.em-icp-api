@@ -17,7 +17,7 @@ export class TestUtil {
     });
 
     this.idamHttp = Axios.create({
-      baseURL: config.idam.url,
+      baseURL: process.env["IDAM_API_BASE_URL"] || "http://localhost:5000",
     });
   }
 
