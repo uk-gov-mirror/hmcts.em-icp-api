@@ -8,6 +8,8 @@ const idamUrl = process.env.IDAM_API_BASE_URL || "http://localhost:5000";
 
 propertiesVolume.addTo(config);
 
+const IDAM_SECRET = config.secrets ? config.secrets["em-icp"]["show-oauth2-token"] : undefined;
+
 export class TestUtil {
 
   async createIcpSession(token: string, caseId: string) {
@@ -44,7 +46,6 @@ export class TestUtil {
     try {
       await axios.post(`${idamUrl}/testing-support/accounts`, userInfo).catch(err => console.log(err));
     } catch (err) {
-      console.log(err);
       console.log("error creating new user");
       throw err;
     }
@@ -57,13 +58,12 @@ export class TestUtil {
     const params = new url.URLSearchParams();
     params.append("scope", "openid roles profile");
     params.append("grant_type", "password");
-    params.append("redirect_uri", process.env.FUNCTIONAL_TEST_CLIENT_OAUTH_SECRET || "http://localhost:8080/oauth2redirect");
+    params.append("redirect_uri", process.env.IDAM_WEBSHOW_WHITELIST || "http://localhost:8080/oauth2redirect");
     params.append("client_id", "webshow");
-    params.append("client_secret", process.env.IDAM_WEBSHOW_WHITELIST || "AAAAAAAAAAAAAAAA");
+    params.append("client_secret", IDAM_SECRET || "AAAAAAAAAAAAAAAA");
     params.append("username", username);
     params.append("password", password);
     try {
-      console.log(idamUrl);
       const response = await axios.post(`${idamUrl}/o/token`, params, { headers });
       return response.data["access_token"];
     } catch (err) {
