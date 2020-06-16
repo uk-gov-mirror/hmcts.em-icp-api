@@ -8,8 +8,6 @@ const idamUrl = process.env.IDAM_API_BASE_URL || "http://localhost:5000";
 
 propertiesVolume.addTo(config);
 
-const IDAM_SECRET = config.secrets ? config.secrets["em-icp"]["show-oauth2-token"] : undefined;
-
 export class TestUtil {
 
   async createIcpSession(token: string, caseId: string) {
@@ -60,7 +58,7 @@ export class TestUtil {
     params.append("grant_type", "password");
     params.append("redirect_uri", process.env.IDAM_WEBSHOW_WHITELIST || "http://localhost:8080/oauth2redirect");
     params.append("client_id", "webshow");
-    params.append("client_secret", IDAM_SECRET || "AAAAAAAAAAAAAAAA");
+    params.append("client_secret", process.env.FUNCTIONAL_TEST_CLIENT_OAUTH_SECRET || "AAAAAAAAAAAAAAAA");
     params.append("username", username);
     params.append("password", password);
     try {
