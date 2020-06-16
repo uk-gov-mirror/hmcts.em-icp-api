@@ -9,11 +9,12 @@ export class TestUtil {
 
   constructor() {
     this.http = Axios.create({
-      baseURL: "http://localhost:8080", // test url - set up in config
+      baseURL: "http://localhost:8080",
     });
 
+    console.log(config.idam.url);
     this.idamHttp = Axios.create({
-      baseURL: config.idam.url,
+      baseURL: process.env.IDAM_API_BASE_URL || "http://localhost:5000",
     });
   }
 
