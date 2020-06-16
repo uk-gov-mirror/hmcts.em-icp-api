@@ -11,7 +11,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "test": "NODE_ENV=testing yarn test:unit",
     "test:unit": "mocha -r ts-node/register 'src/test/unit/**/*.test.ts' --reporter spec --recursive --exit",
-    "test:coverage": "cross-env NODE_ENV=test NODE_PATH=. nyc mocha --require ts-node/register 'src/test/unit/*.test.ts' './test/acceptance/**/*.test.ts' --exit",
+    "test:coverage": "cross-env NODE_ENV=test NODE_PATH=. nyc mocha --require ts-node/register 'src/test/unit/**/*.test.ts' './test/acceptance/**/*.test.ts' --exit",
     "test:a11y": "cross-env NODE_PATH=.",
     "sonar-scanner": "node_modules/sonar-scanner/bin/sonar-scanner",
     "sonar-scan": "cross-env NODE_PATH=. sonar-scanner -Dsonar.projectKey='em-icp-api' -Dsonar.sources=src/main -Dsonar.tests=src/test -Dsonar.exclusions=src/test/**,node_modules/**,src/** ",
