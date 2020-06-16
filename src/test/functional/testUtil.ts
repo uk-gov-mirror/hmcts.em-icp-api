@@ -1,6 +1,10 @@
 import Axios, {AxiosInstance} from "axios";
+import * as propertiesVolume from "@hmcts/properties-volume";
+
 const config = require("config");
 const url = require("url");
+
+propertiesVolume.addTo(config);
 
 export class TestUtil {
 
@@ -12,9 +16,8 @@ export class TestUtil {
       baseURL: "http://localhost:8080",
     });
 
-    console.log(config.idam.url);
     this.idamHttp = Axios.create({
-      baseURL: process.env.IDAM_API_BASE_URL || "http://localhost:5000",
+      baseURL: config.idam.url,
     });
   }
 
