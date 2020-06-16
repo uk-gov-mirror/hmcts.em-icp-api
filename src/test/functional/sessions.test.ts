@@ -21,6 +21,7 @@ describe("/GET sessions", () => {
     const headers = {
       "Authorization": `Bearer ${token}`,
     };
+    console.log(token);
     const response = await http.get(`/icp/sessions/${caseId}`, { headers: headers });
 
     chai.expect(response.status).equal(200);
@@ -33,6 +34,7 @@ describe("/GET sessions", () => {
     await http.get(`/icp/sessions/${caseId}`, { headers: headers })
       .catch((err) => {
         if (err) {
+          console.log(err);
           chai.expect(err.response.status).equal(401);
           chai.expect(err.response.statusText).equal("Unauthorized");
         }
@@ -43,6 +45,7 @@ describe("/GET sessions", () => {
     await http.get(`/icp/sessions/${caseId}`)
       .catch((err) => {
         if (err) {
+          console.log(err);
           chai.expect(err.response.status).equal(401);
           chai.expect(err.response.statusText).equal("Unauthorized");
           chai.expect(err.response.data).to.deep.equal({error: "Unauthorized user"});
