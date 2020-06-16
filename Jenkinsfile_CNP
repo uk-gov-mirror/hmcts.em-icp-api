@@ -6,8 +6,6 @@ def type = "nodejs"
 def product = "em"
 def component = "icp"
 
-env.IDAM_API_BASE_URL = "http://idam-api.aat.platform.hmcts.net"
-
 def secrets = [
   's2s-${env}': [
     secret('microservicekey-em-gw', 'FUNCTIONAL_TEST_CLIENT_S2S_TOKEN')
@@ -23,8 +21,16 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
   ]
 }
 
+// Vars for Kubernetes
+env.IDAM_API_BASE_URI = 'https://idam-api.aat.platform.hmcts.net'
+
+def vaultOverrides = [
+        'preview' : 'aat',
+        'spreview': 'saat'
+]
 
 withPipeline(type, product, component) {
+  overrideVaultEnvironments(vaultOverrides)
   loadVaultSecrets(secrets)
   enableAksStagingDeployment()
   disableLegacyDeployment()
