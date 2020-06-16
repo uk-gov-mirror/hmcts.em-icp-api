@@ -22,7 +22,7 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
 }
 
 // Vars for Kubernetes
-env.IDAM_API_BASE_URI = 'https://idam-api.aat.platform.hmcts.net'
+env.IDAM_API_BASE_URL = 'https://idam-api.aat.platform.hmcts.net'
 
 def vaultOverrides = [
         'preview' : 'aat',
