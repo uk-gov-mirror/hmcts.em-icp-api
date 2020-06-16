@@ -5,7 +5,7 @@ const actions = require("../../main/models/actions");
 const io = require("socket.io-client");
 const testUtil = new TestUtil();
 
-describe("Suite of unit tests", () => {
+describe("Socket io functional tests", () => {
   const username = "b@a.com";
   const password = "4590fgvhbfgbDdffm3lk4j";
 
