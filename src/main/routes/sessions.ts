@@ -4,11 +4,11 @@ import { Session } from "../models/session";
 import { UserInfo } from "../models/userInfo";
 import { redisClient as redis } from "../app";
 import { IdamClient } from "../security/idam-client";
+
 const { Logger } = require("@hmcts/nodejs-logging");
 const router = express.Router();
 const idam = new IdamClient();
 const logger = Logger.getLogger("sessions");
-
 
 router.get("/icp/sessions/:caseId", async (req, res) => {
   const token = req.header("Authorization");
