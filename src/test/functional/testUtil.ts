@@ -13,7 +13,7 @@ export class TestUtil {
 
   constructor() {
     this.http = Axios.create({
-      baseURL: "http://localhost:8080",
+      baseURL: process.env.TEST_URL || "http://localhost:8080",
     });
 
     this.idamHttp = Axios.create({
@@ -58,9 +58,9 @@ export class TestUtil {
     const params = new url.URLSearchParams();
     params.append("scope", "openid roles profile");
     params.append("grant_type", "password");
-    params.append("redirect_uri", "http://localhost:8080/oauth2redirect");
+    params.append("redirect_uri", process.env["FUNCTIONAL_TEST_CLIENT_OAUTH_SECRET"] || "http://localhost:8080/oauth2redirect");
     params.append("client_id", "webshow");
-    params.append("client_secret", "AAAAAAAAAAAAAAAA");
+    params.append("client_secret", process.env["IDAM_API_BASE_URL"] || "AAAAAAAAAAAAAAAA");
     params.append("username", username);
     params.append("password", password);
     try {
