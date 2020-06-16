@@ -6,6 +6,7 @@ const io = require("socket.io-client");
 const testUtil = new TestUtil();
 
 describe("Socket io functional tests", () => {
+  const baseUrl = process.env.TEST_URL || "http://localhost:8080";
   const username = "b@a.com";
   const password = "4590fgvhbfgbDdffm3lk4j";
 
@@ -18,7 +19,7 @@ describe("Socket io functional tests", () => {
 
     icpSession = await testUtil.createIcpSession(token, "1234");
 
-    socket = io.connect("http://localhost:8080", {
+    socket = io.connect(baseUrl, {
       path: "/icp/socket.io",
       extraHeaders: {
         Authorization: `Bearer ${token}`,

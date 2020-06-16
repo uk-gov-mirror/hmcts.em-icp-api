@@ -6,7 +6,7 @@ const testUtil = new TestUtil();
 // const config = require("config");
 
 const http = Axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: process.env.TEST_URL || "http://localhost:8080",
 });
 
 const username = "b@a.com";
@@ -34,7 +34,6 @@ describe("/GET sessions", () => {
     await http.get(`/icp/sessions/${caseId}`, { headers: headers })
       .catch((err) => {
         if (err) {
-          console.log(err);
           chai.expect(err.response.status).equal(401);
           chai.expect(err.response.statusText).equal("Unauthorized");
         }
@@ -45,7 +44,6 @@ describe("/GET sessions", () => {
     await http.get(`/icp/sessions/${caseId}`)
       .catch((err) => {
         if (err) {
-          console.log(err);
           chai.expect(err.response.status).equal(401);
           chai.expect(err.response.statusText).equal("Unauthorized");
           chai.expect(err.response.data).to.deep.equal({error: "Unauthorized user"});
@@ -63,6 +61,7 @@ describe("/GET sessions", () => {
     await http.get(`/icp/sessions/${null}`, { headers: headers })
       .catch((err) => {
         if (err) {
+          console.log(err);
           chai.expect(err.response.status).equal(400);
           chai.expect(err.response.statusText).equal("Invalid case id");
         }
