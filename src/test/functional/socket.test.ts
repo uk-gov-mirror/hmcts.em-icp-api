@@ -5,6 +5,8 @@ const actions = require("../../main/models/actions");
 const io = require("socket.io-client");
 const testUtil = new TestUtil();
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 describe("Socket io functional tests", () => {
   const baseUrl = process.env.TEST_URL || "http://localhost:8080";
   const username = "b@a.com";
