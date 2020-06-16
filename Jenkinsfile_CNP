@@ -6,6 +6,8 @@ def type = "nodejs"
 def product = "em"
 def component = "icp"
 
+env.IDAM_API_BASE_URL = "http://idam-api.aat.platform.hmcts.net"
+
 def secrets = [
   's2s-${env}': [
     secret('microservicekey-em-gw', 'FUNCTIONAL_TEST_CLIENT_S2S_TOKEN')
