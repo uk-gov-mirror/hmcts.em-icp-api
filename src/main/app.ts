@@ -30,7 +30,7 @@ export const app = express();
 app.locals.ENV = env;
 
 export let redisClient;
-if (env === "testing") {
+if (env === "test") {
   redisClient = new redisMock(config.redis.port, config.redis.host);
 } else {
   const tlsOptions = {

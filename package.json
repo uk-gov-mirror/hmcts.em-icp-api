@@ -9,7 +9,7 @@
     "start": "NODE_ENV=production ./node_modules/.bin/ts-node -r tsconfig-paths/register src/main/server.ts",
     "start:dev": "nodemon --config nodemon.json",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "test": "NODE_ENV=testing yarn test:unit",
+    "test": "NODE_ENV=test yarn test:unit",
     "test:unit": "mocha -r ts-node/register 'src/test/unit/**/*.test.ts' --reporter spec --recursive --exit",
     "test:coverage": "cross-env NODE_ENV=test NODE_PATH=. nyc mocha --require ts-node/register 'src/test/unit/**/*.test.ts' './test/acceptance/**/*.test.ts' --exit",
     "test:a11y": "cross-env NODE_PATH=.",
