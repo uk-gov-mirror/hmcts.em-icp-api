@@ -21,11 +21,14 @@ describe("Socket io functional tests", () => {
 
     socket = io.connect(baseUrl, {
       path: "/icp/socket.io",
-      secure: false,
       extraHeaders: {
         Authorization: `Bearer ${token}`,
       },
     });
+    socket.io.opts.secure = false;
+    socket.io.opts.port = "80";
+    socket.io.engine.secure = false;
+    socket.io.engine.port = "80";
   });
 
   afterEach(() => {
