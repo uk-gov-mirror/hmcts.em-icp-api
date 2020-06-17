@@ -55,7 +55,7 @@ describe("/GET sessions", () => {
     const headers = {
       "Authorization": `Bearer ${token}`,
     };
-    await axios.get(`${frontendURL}/icp/sessions/${null}`, { headers: headers })
+    await axios.get(`${frontendURL}/icp/sessions/null`, { headers: headers })
       .catch((err) => {
         if (err) {
           console.log(err);
@@ -72,7 +72,7 @@ describe("/GET sessions", () => {
     const headers = {
       "Authorization": `Bearer ${token}`,
     };
-    await axios.get(`${frontendURL}/icp/sessions/${undefined}`, { headers: headers })
+    await axios.get(`${frontendURL}/icp/sessions/undefined`, { headers: headers })
       .catch((err) => {
         if (err) {
           chai.expect(err.response.status).equal(400);
