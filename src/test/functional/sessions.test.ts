@@ -58,9 +58,7 @@ describe("/GET sessions", () => {
     await axios.get(`${frontendURL}/icp/sessions/null`, { headers: headers })
       .catch((err) => {
         if (err) {
-          console.log(err);
           chai.expect(err.response.status).equal(400);
-          chai.expect(err.response.statusText).equal("Invalid case id");
         }
       });
   });
@@ -76,7 +74,6 @@ describe("/GET sessions", () => {
       .catch((err) => {
         if (err) {
           chai.expect(err.response.status).equal(400);
-          chai.expect(err.response.statusText).equal("Invalid case id");
         }
       });
   });
