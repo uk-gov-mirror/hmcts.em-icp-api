@@ -9,6 +9,8 @@ const username = "b@a.com";
 const password = "4590fgvhbfgbDdffm3lk4j";
 const caseId = "1234";
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 describe("/GET sessions", () => {
   it("it should return (200) OK", async () => {
     await testUtil.createNewUser(username, password);

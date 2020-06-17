@@ -8,6 +8,8 @@ const idamUrl = process.env.IDAM_API_BASE_URL || "http://localhost:5000";
 
 propertiesVolume.addTo(config);
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 export class TestUtil {
 
   async createIcpSession(token: string, caseId: string) {
@@ -26,9 +28,7 @@ export class TestUtil {
   }
 
   async createNewUser(username: string, password: string) {
-    console.log(idamUrl);
-    console.log(frontendURL);
-    await axios.delete(`${idamUrl}/testing-support/accounts/b@a.com`).catch(err => console.log(err));
+    await axios.delete(`${idamUrl}/testing-support/accounts/b@a.com`);
     const userInfo = {
       "email": username,
       "forename": "John",
@@ -65,7 +65,6 @@ export class TestUtil {
       const response = await axios.post(`${idamUrl}/o/token`, params, { headers });
       return response.data["access_token"];
     } catch (err) {
-      console.log(err);
       console.log("error fetching token");
       throw err;
     }
