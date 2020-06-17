@@ -5,8 +5,6 @@ const actions = require("../../main/models/actions");
 const io = require("socket.io-client");
 const testUtil = new TestUtil();
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-
 describe("Socket io functional tests", () => {
   const baseUrl = process.env.TEST_URL || "http://localhost:8080";
   const username = "b@a.com";
@@ -23,6 +21,7 @@ describe("Socket io functional tests", () => {
 
     socket = io.connect(baseUrl, {
       path: "/icp/socket.io",
+      secure: false,
       extraHeaders: {
         Authorization: `Bearer ${token}`,
       },
@@ -48,6 +47,7 @@ describe("Socket io functional tests", () => {
       chai.expect(data.client.username).equal("John Smith");
       chai.expect(data.presenter.id).equal("");
       chai.expect(data.presenter.username).equal("");
+
       done();
     });
     socket.emit("join", icpSession);
