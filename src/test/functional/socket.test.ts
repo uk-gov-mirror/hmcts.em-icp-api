@@ -29,12 +29,13 @@ describe("Socket io functional tests", () => {
     });
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     socket.disconnect();
     socket.close();
   });
 
   it("connect to web socket server", (done) => {
+    console.log(socket);
     socket.on("connect", () => {
       chai.expect(socket.connected).equal(true);
       done();
