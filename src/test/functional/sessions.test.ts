@@ -12,20 +12,25 @@ const caseId = "1234";
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 describe("/GET sessions", () => {
-  it("it should return (200) OK", async () => {
-    await testUtil.createNewUser(username, password);
-    const token = await testUtil.requestUserToken(username, password);
+  let token;
+  let headers;
 
-    const headers = {
+  beforeEach(async () => {
+    await testUtil.createNewUser(username, password);
+    token = await testUtil.requestUserToken(username, password);
+
+    headers = {
       "Authorization": `Bearer ${token}`,
     };
-    const response = await axios.get(`${frontendURL}/icp/sessions/${caseId}`, { headers: headers });
+  });
 
+  it("it should return (200) OK", async () => {
+    const response = await axios.get(`${frontendURL}/icp/sessions/${caseId}`, { headers: headers });
     chai.expect(response.status).equal(200);
   });
 
   it("it should return (401) Unauthorized with invalid token", async () => {
-    const headers = {
+    headers = {
       "Authorization": "Bearer token",
     };
     await axios.get(`${frontendURL}/icp/sessions/${caseId}`, { headers: headers })
@@ -49,12 +54,6 @@ describe("/GET sessions", () => {
   });
 
   it("it should return (400) Invalid case id - null", async () => {
-    await testUtil.createNewUser(username, password);
-    const token = await testUtil.requestUserToken(username, password);
-
-    const headers = {
-      "Authorization": `Bearer ${token}`,
-    };
     await axios.get(`${frontendURL}/icp/sessions/null`, { headers: headers })
       .catch((err) => {
         if (err) {
@@ -64,12 +63,6 @@ describe("/GET sessions", () => {
   });
 
   it("it should return (400) Invalid case id - undefined", async () => {
-    await testUtil.createNewUser(username, password);
-    const token = await testUtil.requestUserToken(username, password);
-
-    const headers = {
-      "Authorization": `Bearer ${token}`,
-    };
     await axios.get(`${frontendURL}/icp/sessions/undefined`, { headers: headers })
       .catch((err) => {
         if (err) {

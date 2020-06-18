@@ -11,11 +11,12 @@ const appInsights = require("applicationinsights");
 const config = require("config");
 const { Express, Logger } = require("@hmcts/nodejs-logging");
 const { setupDev } = require("./development");
-const Redis = require("ioredis");
-const redisMock = require("ioredis-mock");
 const healthcheck = require("./routes/health");
 const helmet = require("helmet");
 const noCache = require("nocache");
+const redisImport = config.redis.import;
+const Redis = require(redisImport);
+
 const env = process.env.NODE_ENV || "development";
 const developmentMode = env === "development";
 
@@ -29,25 +30,20 @@ const logger = Logger.getLogger("app");
 export const app = express();
 app.locals.ENV = env;
 
-export let redisClient;
-if (env === "test") {
-  redisClient = new redisMock(config.redis.port, config.redis.host);
-} else {
-  const tlsOptions = {
-    password: REDIS_PASSWORD,
-    tls: true,
-  };
-  const redisOptions = config.redis.useTLS === "true" ? tlsOptions : {};
-  redisClient = new Redis(config.redis.port, config.redis.host, redisOptions);
+const tlsOptions = {
+  password: REDIS_PASSWORD,
+  tls: true,
+};
+const redisOptions = config.redis.useTLS === "true" ? tlsOptions : {};
+export const redisClient = new Redis(config.redis.port, config.redis.host, redisOptions);
 
-  redisClient.on("ready", () => {
-    console.log("Redis is ready");
-  });
+redisClient.on("ready", () => {
+  console.log("Redis is ready");
+});
 
-  redisClient.on("error", (err: { message: string; }) => {
-    console.log("Error in Redis: ", err.message);
-  });
-}
+redisClient.on("error", (err: { message: string; }) => {
+  console.log("Error in Redis: ", err.message);
+});
 
 app.use(Express.accessLogger());
 
