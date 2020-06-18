@@ -39,3 +39,9 @@ variable "appinsights_location" {
   default     = "West Europe"
   description = "Location for Application Insights"
 }
+
+# thumbprint of the SSL certificate for API gateway tests
+variable icp_api_gateway_certificate_thumbprints {
+  type = "list"
+  default = []
+}
