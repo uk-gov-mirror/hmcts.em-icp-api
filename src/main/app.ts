@@ -6,8 +6,10 @@ import { RouterFinder } from "./router/routerFinder";
 import { HttpError } from "./httpError";
 import csrf from "csurf";
 import * as propertiesVolume from "@hmcts/properties-volume";
+import { swaggerDocument } from "./swagger";
 
 const appInsights = require("applicationinsights");
+const swaggerUi = require("swagger-ui-express");
 const config = require("config");
 const { Express, Logger } = require("@hmcts/nodejs-logging");
 const { setupDev } = require("./development");
@@ -56,6 +58,8 @@ if (APP_INSIGHTS_KEY) {
   appInsights.defaultClient.context.tags[appInsights.defaultClient.context.keys.cloudRole] = "em-icp";
 }
 
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 app.use(noCache());
 app.use(helmet());
 app.use(helmet.xssFilter({setOnOldIE: true}));
@@ -70,6 +74,7 @@ app.use((req, res, next) => {
   );
   next();
 });
+
 app.use("/", RouterFinder.findAll(path.join(__dirname, "routes")));
 setupDev(app, developmentMode);
 
