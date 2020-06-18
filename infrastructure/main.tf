@@ -6,6 +6,11 @@ locals {
   app_full_name = "${var.product}-${var.component}"
   local_env           = "${(var.env == "preview" || var.env == "spreview") ? (var.env == "preview" ) ? "aat" : "saat" : var.env}"
   s2s_key             = "${data.azurerm_key_vault_secret.s2s_key.value}"
+  #region API gateway
+  thumbprints_in_quotes = "${formatlist("&quot;%s&quot;", var.icp_api_gateway_certificate_thumbprints)}"
+  thumbprints_in_quotes_str = "${join(",", local.thumbprints_in_quotes)}"
+  api_policy = "${replace(file("template/api-policy.xml"), "ALLOWED_CERTIFICATE_THUMBPRINTS", local.thumbprints_in_quotes_str)}"
+  api_base_path = "bulk-scanning-payment"
 }
 
 resource "azurerm_resource_group" "rg" {
