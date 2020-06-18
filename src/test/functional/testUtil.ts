@@ -22,13 +22,13 @@ export class TestUtil {
       return response.data;
     } catch (err) {
       console.log("error creating new icp session");
-      console.log(err);
       throw err;
     }
   }
 
   async createNewUser(username: string, password: string) {
-    await axios.delete(`${idamUrl}/testing-support/accounts/b@a.com`).catch(err => console.log(err));
+    await axios.delete(`${idamUrl}/testing-support/accounts/b@a.com`)
+      .catch(() => console.log("User could not be found"));
     const userInfo = {
       "email": username,
       "forename": "John",
@@ -45,7 +45,6 @@ export class TestUtil {
       await axios.post(`${idamUrl}/testing-support/accounts`, userInfo).catch(err => console.log(err));
     } catch (err) {
       console.log("error creating new user");
-      console.log(err);
       throw err;
     }
   }
@@ -67,7 +66,6 @@ export class TestUtil {
       return response.data["access_token"];
     } catch (err) {
       console.log("error fetching token");
-      console.log(err);
       throw err;
     }
   }
