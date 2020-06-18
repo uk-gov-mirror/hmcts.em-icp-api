@@ -28,7 +28,7 @@ export class TestUtil {
   }
 
   async createNewUser(username: string, password: string) {
-    await axios.delete(`${idamUrl}/testing-support/accounts/b@a.com`);
+    await axios.delete(`${idamUrl}/testing-support/accounts/b@a.com`).catch(err => console.log(err));
     const userInfo = {
       "email": username,
       "forename": "John",
