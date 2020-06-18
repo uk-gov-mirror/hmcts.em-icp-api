@@ -31,9 +31,7 @@ const socket = (server: Server) => {
           throw error;
         }
 
-        if (session.sessionId === data.sessionId) {
-          client.join(data.sessionId);
-        }
+        client.join(data.sessionId);
 
         if (io.sockets.adapter.rooms[session.sessionId].length === 1) {
           session.presenterName = "";
