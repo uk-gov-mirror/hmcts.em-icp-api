@@ -22,6 +22,7 @@ export class TestUtil {
       return response.data;
     } catch (err) {
       console.log("error creating new icp session");
+      console.log(err);
       throw err;
     }
   }
@@ -44,6 +45,7 @@ export class TestUtil {
       await axios.post(`${idamUrl}/testing-support/accounts`, userInfo).catch(err => console.log(err));
     } catch (err) {
       console.log("error creating new user");
+      console.log(err);
       throw err;
     }
   }
@@ -65,6 +67,7 @@ export class TestUtil {
       return response.data["access_token"];
     } catch (err) {
       console.log("error fetching token");
+      console.log(err);
       throw err;
     }
   }
