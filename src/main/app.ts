@@ -13,10 +13,12 @@ const swaggerUi = require("swagger-ui-express");
 const config = require("config");
 const { Express, Logger } = require("@hmcts/nodejs-logging");
 const { setupDev } = require("./development");
-const Redis = require("ioredis");
 const healthcheck = require("./routes/health");
 const helmet = require("helmet");
 const noCache = require("nocache");
+const redisImport = config.redis.import;
+const Redis = require(redisImport);
+
 const env = process.env.NODE_ENV || "development";
 const developmentMode = env === "development";
 
@@ -26,6 +28,9 @@ const REDIS_PASSWORD = config.secrets ? config.secrets["em-icp"]["redis-password
 const APP_INSIGHTS_KEY = config.secrets ? config.secrets["em-icp"]["AppInsightsInstrumentationKey"] : undefined;
 
 const logger = Logger.getLogger("app");
+
+export const app = express();
+app.locals.ENV = env;
 
 const tlsOptions = {
   password: REDIS_PASSWORD,
@@ -41,9 +46,6 @@ redisClient.on("ready", () => {
 redisClient.on("error", (err: { message: string; }) => {
   console.log("Error in Redis: ", err.message);
 });
-
-export const app = express();
-app.locals.ENV = env;
 
 app.use(Express.accessLogger());
 

@@ -1,1 +1,4 @@
-testUrl: 'http://localhost:8080'
+testUrl: "http://localhost:8080"
+
+redis:
+  import: 'ioredis-mock'

@@ -25,6 +25,7 @@ tokenRefreshTime: 3600000 # (60 mins)
 redis:
   host: 'localhost'
   port: 6379
+  import: 'ioredis'
 
 security:
   referrerPolicy: "origin"
