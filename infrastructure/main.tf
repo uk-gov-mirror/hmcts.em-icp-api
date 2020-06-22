@@ -6,9 +6,17 @@ locals {
   app_full_name = "${var.product}-${var.component}"
   local_env           = "${(var.env == "preview" || var.env == "spreview") ? (var.env == "preview" ) ? "aat" : "saat" : var.env}"
   s2s_key             = "${data.azurerm_key_vault_secret.s2s_key.value}"
-  #region API gateway
-  thumbprints_in_quotes = "${formatlist("&quot;%s&quot;", var.icp_api_gateway_certificate_thumbprints)}"
-  thumbprints_in_quotes_str = "${join(",", local.thumbprints_in_quotes)}"
+  # list of the thumbprints of the SSL certificates that should be accepted by the API (gateway)
+  allowed_certificate_thumbprints = [
+  # API tests
+    var.api_gateway_test_certificate_thumbprint,
+  "29390B7A235C692DACD93FA0AB90081867177BEC"
+  ]
+  thumbprints_in_quotes     = formatlist("&quot;%s&quot;", local.allowed_certificate_thumbprints)
+  thumbprints_in_quotes_str = join(",", local.thumbprints_in_quotes)
+  api_policy                = replace(file("template/api-policy.xml"), "ALLOWED_CERTIFICATE_THUMBPRINTS", local.thumbprints_in_quotes_str)
+  api_base_path             = "${var.product}-recipes-api"
+
   api_policy = "${replace(file("template/api-policy.xml"), "ALLOWED_CERTIFICATE_THUMBPRINTS", local.thumbprints_in_quotes_str)}"
   api_base_path = "bulk-scanning-payment"
 }
@@ -110,13 +118,34 @@ resource "azurerm_key_vault_secret" "local_redis_password" {
   key_vault_id = "${module.local_key_vault.key_vault_id}"
 }
 
-resource "azurerm_api_management_product" "product" {
-  product_id            = "icp-api-${var.env}"
-  api_management_name   = "${var.api_mgmt_name}"
-  resource_group_name   = "core-infra-${var.env}"
-  display_name          = "icp-api-${var.env}"
-  subscription_required = "${var.subscription_required}"
-  subscriptions_limit   = "${var.subscriptions_limit}"
-  approval_required     = "${var.approval_required}"
-  published             = "${var.published}"
+# region API (gateway)
+
+module "icp_product" {
+  source = "git@github.com:hmcts/cnp-module-api-mgmt-product?ref=master"
+
+  api_mgmt_name = "core-api-mgmt-${var.env}"
+  api_mgmt_rg   = "core-infra-${var.env}"
+
+  name = "plum-recipes"
+}
+
+module "api" {
+  source        = "git@github.com:hmcts/cnp-module-api-mgmt-api?ref=master"
+  name          = "${var.product}-icp-api"
+  api_mgmt_rg   = "core-infra-${var.env}"
+  api_mgmt_name = "core-api-mgmt-${var.env}"
+  display_name  = "${var.product}-icp"
+  revision      = "1"
+  product_id    = "${module.icp_product.product_id}"
+  path          = local.api_base_path
+  service_url   = "http://${app_full_name}-${var.env}.service.core-compute-${var.env}.internal"
+  swagger_url   = "https://raw.githubusercontent.com/hmcts/reform-api-docs/master/docs/specs/cnp-plum-recipes-service.json"
+}
+
+module "policy" {
+  source                 = "git@github.com:hmcts/cnp-module-api-mgmt-api-policy?ref=master"
+  api_mgmt_name          = "core-api-mgmt-${var.env}"
+  api_mgmt_rg            = "core-infra-${var.env}"
+  api_name               = "${module.api.name}"
+  api_policy_xml_content = "${local.api_policy}"
 }
