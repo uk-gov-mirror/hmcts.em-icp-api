@@ -110,35 +110,13 @@ resource "azurerm_key_vault_secret" "local_redis_password" {
   key_vault_id = "${module.local_key_vault.key_vault_id}"
 }
 
-
-data "template_file" "api_template" {
-  template = "${file("${path.module}/template/api.json")}"
-}
-
-data "template_file" "policy_template" {
-  template = "${file("${path.module}/template/api-policy.xml")}"
-
-  vars {
-    allowed_certificate_thumbprints = "${local.thumbprints_in_quotes_str}"
-    s2s_client_id = "${data.azurerm_key_vault_secret.s2s_key.value}"
-    s2s_client_secret = "${data.azurerm_key_vault_secret.s2s_key.value}"
-#    s2s_base_url = "${local.s2sUrl}"
-  }
-}
-
-resource "azurerm_template_deployment" "icp-api" {
-  template_body       = "${data.template_file.api_template.rendered}"
-  name                = "icp-api-${var.env}"
-  deployment_mode     = "Incremental"
-  resource_group_name = "core-infra-${var.env}"
-  count               = "${var.env != "preview" ? 1: 0}"
-
-  parameters = {
-    apiManagementServiceName  = "core-api-mgmt-${var.env}"
-    apiName                   = "icp-api"
-    apiProductName            = "icp"
-    serviceUrl                = "http://icp-api-${var.env}.service.core-compute-${var.env}.internal"
-    apiBasePath               = "${local.api_base_path}"
-    policy                    = "${data.template_file.policy_template.rendered}"
-  }
+resource "azurerm_api_management_product" "product" {
+  product_id            = "icp-api-${var.env}"
+  api_management_name   = "${var.api_mgmt_name}"
+  resource_group_name   = "core-infra-${var.env}"
+  display_name          = "icp-api-${var.env}"
+  subscription_required = "${var.subscription_required}"
+  subscriptions_limit   = "${var.subscriptions_limit}"
+  approval_required     = "${var.approval_required}"
+  published             = "${var.published}"
 }
