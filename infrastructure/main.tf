@@ -6,6 +6,11 @@ locals {
   app_full_name = "${var.product}-${var.component}"
   local_env           = "${(var.env == "preview" || var.env == "spreview") ? (var.env == "preview" ) ? "aat" : "saat" : var.env}"
   s2s_key             = "${data.azurerm_key_vault_secret.s2s_key.value}"
+  #region API gateway
+  thumbprints_in_quotes = "${formatlist("&quot;%s&quot;", var.icp_api_gateway_certificate_thumbprints)}"
+  thumbprints_in_quotes_str = "${join(",", local.thumbprints_in_quotes)}"
+  api_policy = "${replace(file("template/api-policy.xml"), "ALLOWED_CERTIFICATE_THUMBPRINTS", local.thumbprints_in_quotes_str)}"
+  api_base_path = "bulk-scanning-payment"
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -103,4 +108,37 @@ resource "azurerm_key_vault_secret" "local_redis_password" {
   name = "redis-password"
   value = "${module.em-icp-redis-cache.access_key}"
   key_vault_id = "${module.local_key_vault.key_vault_id}"
+}
+
+
+data "template_file" "api_template" {
+  template = "${file("${path.module}/template/api.json")}"
+}
+
+data "template_file" "policy_template" {
+  template = "${file("${path.module}/template/api-policy.xml")}"
+
+  vars {
+    allowed_certificate_thumbprints = "${local.thumbprints_in_quotes_str}"
+    s2s_client_id = "${data.azurerm_key_vault_secret.s2s_key.value}"
+    s2s_client_secret = "${data.azurerm_key_vault_secret.s2s_key.value}"
+#    s2s_base_url = "${local.s2sUrl}"
+  }
+}
+
+resource "azurerm_template_deployment" "icp-api" {
+  template_body       = "${data.template_file.api_template.rendered}"
+  name                = "icp-api-${var.env}"
+  deployment_mode     = "Incremental"
+  resource_group_name = "core-infra-${var.env}"
+  count               = "${var.env != "preview" ? 1: 0}"
+
+  parameters = {
+    apiManagementServiceName  = "core-api-mgmt-${var.env}"
+    apiName                   = "icp-api"
+    apiProductName            = "icp"
+    serviceUrl                = "http://icp-api-${var.env}.service.core-compute-${var.env}.internal"
+    apiBasePath               = "${local.api_base_path}"
+    policy                    = "${data.template_file.policy_template.rendered}"
+  }
 }
