@@ -71,3 +71,10 @@ variable "published" {
   default     = true
   description = "If the product should be published"
 }
+# thumbprint of the SSL certificate for API gateway tests
+variable api_gateway_test_certificate_thumbprint {
+  type = "string"
+
+  # keeping this empty by default, so that no thumbprint will match
+  default = ""
+}
