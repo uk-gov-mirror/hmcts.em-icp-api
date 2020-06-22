@@ -8,9 +8,9 @@ locals {
   s2s_key             = "${data.azurerm_key_vault_secret.s2s_key.value}"
   # list of the thumbprints of the SSL certificates that should be accepted by the API (gateway)
   allowed_certificate_thumbprints = [
-  # API tests
+    # API tests
     var.api_gateway_test_certificate_thumbprint,
-  "29390B7A235C692DACD93FA0AB90081867177BEC"
+    "29390B7A235C692DACD93FA0AB90081867177BEC"
   ]
   thumbprints_in_quotes     = formatlist("&quot;%s&quot;", local.allowed_certificate_thumbprints)
   thumbprints_in_quotes_str = join(",", local.thumbprints_in_quotes)
