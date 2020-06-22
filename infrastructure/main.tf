@@ -15,10 +15,7 @@ locals {
   thumbprints_in_quotes     = formatlist("&quot;%s&quot;", local.allowed_certificate_thumbprints)
   thumbprints_in_quotes_str = join(",", local.thumbprints_in_quotes)
   api_policy                = replace(file("template/api-policy.xml"), "ALLOWED_CERTIFICATE_THUMBPRINTS", local.thumbprints_in_quotes_str)
-  api_base_path             = "${var.product}-recipes-api"
-
-  api_policy = "${replace(file("template/api-policy.xml"), "ALLOWED_CERTIFICATE_THUMBPRINTS", local.thumbprints_in_quotes_str)}"
-  api_base_path = "bulk-scanning-payment"
+  api_base_path             = "${var.product}-icp-api"
 }
 
 resource "azurerm_resource_group" "rg" {
