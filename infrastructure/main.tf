@@ -136,7 +136,7 @@ module "api" {
   revision      = "1"
   product_id    = "${module.em-icp-api.product_id}"
   path          = "${local.api_base_path}"
-  service_url   = "http://"${app_full_name}"-"${var.env}".service.core-compute-"${var.env}".internal"
+  service_url   = "http://em-icp-aat.service.core-compute-aat.internal"
   swagger_url   = "https://raw.githubusercontent.com/hmcts/reform-api-docs/master/docs/specs/cnp-plum-recipes-service.json"
 }
 
