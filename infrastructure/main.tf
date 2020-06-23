@@ -121,7 +121,7 @@ resource "azurerm_key_vault_secret" "local_redis_password" {
 module "em-icp-api" {
   source = "git@github.com:hmcts/cnp-module-api-mgmt-product?ref=master"
 
-  api_mgmt_name = "core-api-mgmt-${var.env}"
+  api_mgmt_name1 = "core-api-mgmt-${var.env}"
   api_mgmt_rg   = "core-infra-${var.env}"
 
   name = "em-icp-api"
@@ -132,7 +132,7 @@ module "api" {
   source        = "git@github.com:hmcts/cnp-module-api-mgmt-api?ref=master"
   name          = "${var.product}-icp-api"
   api_mgmt_rg   = "core-infra-${var.env}"
-  api_mgmt_name = "core-api-mgmt-${var.env}"
+  api_mgmt_name2 = "core-api-mgmt-${var.env}"
   display_name  = "${var.product}-icp"
   revision      = "1"
   product_id    = "${module.em-icp-api.product_id}"
@@ -143,7 +143,7 @@ module "api" {
 
 module "policy" {
   source                 = "git@github.com:hmcts/cnp-module-api-mgmt-api-policy?ref=master"
-  api_mgmt_name          = "core-api-mgmt-${var.env}"
+  api_mgmt_name3          = "core-api-mgmt-${var.env}"
   api_mgmt_rg            = "core-infra-${var.env}"
   api_name               = "${module.api.name}"
   api_policy_xml_content = "${local.api_policy}"
