@@ -118,13 +118,13 @@ resource "azurerm_key_vault_secret" "local_redis_password" {
 
 # region API (gateway)
 
-module "icp_product" {
+module "em-icp-api" {
   source = "git@github.com:hmcts/cnp-module-api-mgmt-product?ref=master"
 
   api_mgmt_name = "core-api-mgmt-${var.env}"
   api_mgmt_rg   = "core-infra-${var.env}"
 
-  name = "plum-recipes"
+  name = "em-icp-api"
 }
 
 module "api" {
@@ -134,7 +134,7 @@ module "api" {
   api_mgmt_name = "core-api-mgmt-${var.env}"
   display_name  = "${var.product}-icp"
   revision      = "1"
-  product_id    = "${module.icp_product.product_id}"
+  product_id    = "${module.em-icp-api.product_id}"
   path          = "${local.api_base_path}"
   service_url   = "http://${app_full_name}-${var.env}.service.core-compute-${var.env}.internal"
   swagger_url   = "https://raw.githubusercontent.com/hmcts/reform-api-docs/master/docs/specs/cnp-plum-recipes-service.json"
