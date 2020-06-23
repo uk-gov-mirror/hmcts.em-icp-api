@@ -121,9 +121,8 @@ resource "azurerm_key_vault_secret" "local_redis_password" {
 module "em-icp-api" {
   source = "git@github.com:hmcts/cnp-module-api-mgmt-product?ref=master"
 
-  api_mgmt_name = core-api-mgmt-aat
-  api_mgmt_rg   = core-infra-aat
-
+  api_mgmt_name = "core-api-mgmt-aat"
+  api_mgmt_rg   = "core-infra-aat"
   name = "em-icp-api"
 }
 
