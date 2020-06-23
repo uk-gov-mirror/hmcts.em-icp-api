@@ -40,10 +40,6 @@ variable "appinsights_location" {
   description = "Location for Application Insights"
 }
 
-variable "api_mgmt_rg" {
-  description = "Resource group that api management is in, e.g. core-infra-demo"
-}
-
 variable "name" {
   description = "Name of the product"
 }
