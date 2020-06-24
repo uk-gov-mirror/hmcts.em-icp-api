@@ -18,6 +18,7 @@
                 </return-response>
             </when>
         </choose>
+        <rate-limit-by-key calls="3" renewal-period="15" counter-key="@(context.Subscription.Id)" />
     </inbound>
     <outbound>
         <base/>
