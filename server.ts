@@ -5,7 +5,7 @@ import * as https from "https";
 import * as path from "path";
 import { app } from "./app";
 
-const socket = require("./socket");
+const socket = require("./app/socket");
 const logger = Logger.getLogger("server");
 const port: number = parseInt(process.env.PORT, 10) || 8080;
 

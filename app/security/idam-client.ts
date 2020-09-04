@@ -1,5 +1,5 @@
 import Axios, { AxiosInstance } from "axios";
-import { UserInfo } from "../models/userInfo";
+import { UserInfo } from "../model/userInfo";
 
 const config = require("config");
 const jwt = require("jsonwebtoken");

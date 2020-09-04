@@ -1,9 +1,9 @@
 import { Server, Socket } from "socket.io";
-import { redisClient as redis } from "./app";
+import { redisClient as redis } from "../app";
 import { IdamClient } from "./security/idam-client";
 
 const { Logger } = require("@hmcts/nodejs-logging");
-const actions = require("./models/actions");
+const actions = require("./model/actions");
 const socketio = require("socket.io");
 
 const logger = Logger.getLogger("socket");
