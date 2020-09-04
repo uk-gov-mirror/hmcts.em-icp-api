@@ -1,4 +1,4 @@
-import { redisClient as redis } from "../app";
+import { redisClient as redis } from "../../app";
 import * as express from "express";
 
 const healthcheck = require("@hmcts/nodejs-healthcheck");
