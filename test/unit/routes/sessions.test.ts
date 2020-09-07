@@ -1,6 +1,6 @@
 import chai from "chai";
 import chaiHttp from "chai-http";
-import { IdamClient } from "../../../app/security/idam-client";
+import { IdamClient } from "../../../api/security/idam-client";
 import { app } from "../../../app";
 
 const sinon = require("sinon");
