@@ -10,10 +10,7 @@ node_modules/
 *log
 .DS_Store
 
-app/public/img/lib/*
-src/main/public/js/lib/**/*.js
-app/public/stylesheets/lib/*
-
+coverage
 node-rpm-packaging/
 mochawesome-report/
 npm-debug.log.*

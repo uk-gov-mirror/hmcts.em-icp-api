@@ -8,5 +8,8 @@
 !yarn.lock
 
 !tsconfig.json
-!src/main/**
+!api/**
 !config/**
+!socket.ts
+!app.ts
+!server.ts

@@ -2,50 +2,31 @@ import * as bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import express from "express";
 import * as path from "path";
-import { RouterFinder } from "router/routerFinder";
-import { HttpError } from "./app/model/httpError";
+import { RouterFinder } from "./api/router/routerFinder";
+import { HttpError } from "./api/model/httpError";
 import csrf from "csurf";
 import * as propertiesVolume from "@hmcts/properties-volume";
-import { swaggerDocument } from "./swagger";
+import { swaggerDocument } from "./api/swagger";
 
-const appInsights = require("applicationinsights");
-const swaggerUi = require("swagger-ui-express");
-const config = require("config");
-const { Express, Logger } = require("@hmcts/nodejs-logging");
-const { setupDev } = require("./app/development");
-const healthcheck = require("routes/health");
+import * as appInsights from "applicationinsights";
+import * as swaggerUi from "swagger-ui-express";
+import { Express, Logger } from "@hmcts/nodejs-logging";
+
+const healthcheck = require("./api/routes/health");
 const helmet = require("helmet");
 const noCache = require("nocache");
-const redisImport = config.redis.import;
-const Redis = require(redisImport);
+const config = require("config");
 
 const env = process.env.NODE_ENV || "development";
-const developmentMode = env === "development";
 
 propertiesVolume.addTo(config);
 
-const REDIS_PASSWORD = config.secrets ? config.secrets["em-icp"]["redis-password"] : undefined;
 const APP_INSIGHTS_KEY = config.secrets ? config.secrets["em-icp"]["AppInsightsInstrumentationKey"] : undefined;
 
 const logger = Logger.getLogger("app");
 
 export const app = express();
 app.locals.ENV = env;
-
-const tlsOptions = {
-  password: REDIS_PASSWORD,
-  tls: true,
-};
-const redisOptions = config.redis.useTLS === "true" ? tlsOptions : {};
-export const redisClient = new Redis(config.redis.port, config.redis.host, redisOptions);
-
-redisClient.on("ready", () => {
-  console.log("Redis is ready");
-});
-
-redisClient.on("error", (err: { message: string; }) => {
-  console.log("Error in Redis: ", err.message);
-});
 
 app.use(Express.accessLogger());
 
@@ -75,8 +56,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/", RouterFinder.findAll(path.join(__dirname, "routes")));
-setupDev(app, developmentMode);
+app.use("/", RouterFinder.findAll(path.join(__dirname, "api/routes")));
 
 app.use((req, res) => {
   res.status(404);

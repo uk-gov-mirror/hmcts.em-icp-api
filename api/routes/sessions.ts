@@ -2,7 +2,7 @@ import * as express from "express";
 import { v4 as uuidv4 } from "uuid";
 import { Session } from "../model/session";
 import { UserInfo } from "../model/userInfo";
-import { redisClient as redis } from "../../app";
+import { redisClient as redis } from "../redis";
 import { IdamClient } from "../security/idam-client";
 
 const { Logger } = require("@hmcts/nodejs-logging");
