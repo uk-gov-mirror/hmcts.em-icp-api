@@ -22,12 +22,10 @@ if (app.locals.ENV === "development") {
   server.listen(port, () => {
     logger.info(`Application started: https://localhost:${port}`);
   });
-
   socket(server);
 } else {
   const server = app.listen(port, () => {
     logger.info(`Application started: http://localhost:${port}`);
   });
-
   socket(server);
 }
