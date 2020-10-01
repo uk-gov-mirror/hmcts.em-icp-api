@@ -4,10 +4,6 @@ version: '2.1'
 services:
   redis:
     image: redis:latest
-#    environment:
-#      - REDIS_HOST=localhost
-#      - REDIS_PORT=6379
-#      - REDIS_PASSWORD=dummy_password
     ports:
       - "6379:6379"
 
