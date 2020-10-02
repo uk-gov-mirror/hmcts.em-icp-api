@@ -26,7 +26,7 @@ export const swaggerDocument = {
         },
       },
     },
-    "/icp/sessions/:caseId": {
+    "/icp/sessions/{caseId}": {
       get: {
         "parameters": [
           {
