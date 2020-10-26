@@ -7,18 +7,19 @@ const testUtil = new TestUtil();
 
 describe("Socket io functional tests", () => {
   const baseUrl = process.env.TEST_URL || "http://localhost:8080";
-  const username = "b@a.com";
+  const username = "icpFTestUser@em.com";
   const password = "***REMOVED***";
 
-  let icpSession;
-  let socket;
+  let icpSession, socket, token: string;
+
+  before(async () => {
+    await testUtil.createNewUser(username, password);
+    token = await testUtil.requestUserToken(username, password);
+    icpSession = await testUtil.createIcpSession(token, "1234");
+  });
 
   beforeEach(async () => {
-    await testUtil.createNewUser(username, password);
-    const token: string = await testUtil.requestUserToken(username, password);
-
-    icpSession = await testUtil.createIcpSession(token, "1234");
-
+    await testUtil.delay(2000);
     socket = io.connect(baseUrl, {
       path: "/icp/socket.io",
       secure: false,

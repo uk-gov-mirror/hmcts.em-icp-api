@@ -28,7 +28,7 @@ export class TestUtil {
   }
 
   async createNewUser(username: string, password: string): Promise<void> {
-    await axios.delete(`${idamUrl}/testing-support/accounts/b@a.com`)
+    await axios.delete(`${idamUrl}/testing-support/accounts/${username}`)
       .catch(() => console.log("User could not be found"));
     const userInfo = {
       "email": username,
@@ -70,4 +70,9 @@ export class TestUtil {
       throw err;
     }
   }
+
+  async delay(time): Promise<void> {
+    return new Promise(res => setTimeout(res, time));
+  }
+
 }
