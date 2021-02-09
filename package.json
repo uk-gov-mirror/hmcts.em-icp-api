@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@hmcts/info-provider": "^1.0.0",
-    "@hmcts/nodejs-healthcheck": "^1.5.1",
+    "@hmcts/nodejs-healthcheck": "^1.7.0",
     "@hmcts/nodejs-logging": "^3.0.1",
     "@hmcts/properties-volume": "0.0.9",
     "@types/config": "^0.0.36",
@@ -89,9 +89,15 @@
     "tslint": "5.20.1"
   },
   "nyc": {
-    "extension": [".ts"],
-    "include": ["api/**/*.ts"],
-    "exclude": ["test/**/*.ts"],
+    "extension": [
+      ".ts"
+    ],
+    "include": [
+      "api/**/*.ts"
+    ],
+    "exclude": [
+      "test/**/*.ts"
+    ],
     "reporter": "lcov"
   }
 }
