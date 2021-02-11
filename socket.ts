@@ -18,9 +18,9 @@ export class SocketIO {
       cors: {
         origin: "*:*",
         methods: ["GET", "POST", "DELETE"],
-        credentials: true
+        credentials: true,
       },
-      path: "/icp/socket.io"
+      path: "/icp/socket.io",
     });
     io.use(SocketIO.verifyIdamToken).on("connection", SocketIO.addEventListeners);
   }
@@ -97,8 +97,8 @@ export class SocketIO {
   }
 
   static onDisconnection(): void {
-    for(let room of socket.rooms.keys()) {
-      io.in(room).emit(Actions.CLIENT_DISCONNECTED, socket.id)
+    for(const room of socket.rooms.keys()) {
+      io.in(room).emit(Actions.CLIENT_DISCONNECTED, socket.id);
     }
     socket.leave(socket.id);
     logger.info("SocketIO client disconnecting");
