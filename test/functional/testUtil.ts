@@ -13,7 +13,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 export class TestUtil {
 
-  async createIcpSession(token: string, caseId: string): Promise<{ username: string, session: Session }> {
+  static async createIcpSession(token: string, caseId: string): Promise<{ username: string, session: Session }> {
     const headers = {
       "Authorization": `Bearer ${token}`,
     };
@@ -27,7 +27,7 @@ export class TestUtil {
     }
   }
 
-  async createNewUser(username: string, password: string): Promise<void> {
+  static async createNewUser(username: string, password: string): Promise<void> {
     await axios.delete(`${idamUrl}/testing-support/accounts/${username}`)
       .catch(() => console.log("User could not be found"));
     const userInfo = {
@@ -50,7 +50,7 @@ export class TestUtil {
     }
   }
 
-  async requestUserToken(username: string, password: string): Promise<string> {
+  static async requestUserToken(username: string, password: string): Promise<string> {
     const headers = {
       "Content-Type": "application/x-www-form-urlencoded",
     };
@@ -70,9 +70,4 @@ export class TestUtil {
       throw err;
     }
   }
-
-  async delay(time): Promise<void> {
-    return new Promise(res => setTimeout(res, time));
-  }
-
 }
