@@ -2,8 +2,6 @@ import { TestUtil } from "./testUtil";
 import axios from "axios";
 import chai from "chai";
 
-const testUtil = new TestUtil();
-
 const frontendURL = process.env.TEST_URL || "http://localhost:8080";
 const username = "icpFTestUser@em.com";
 const password = "4590fgvhbfgbDdffm3lk4j";
@@ -16,12 +14,8 @@ describe("/GET sessions", () => {
   let headers;
 
   before(async () => {
-    await testUtil.createNewUser(username, password);
-    token = await testUtil.requestUserToken(username, password);
-  });
-
-  beforeEach(async () => {
-    await testUtil.delay(2000);
+    await TestUtil.createNewUser(username, password);
+    token = await TestUtil.requestUserToken(username, password);
   });
 
   it("it should return (200) OK", async () => {
