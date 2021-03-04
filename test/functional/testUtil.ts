@@ -6,8 +6,6 @@ const config = require("config");
 const url = require("url");
 const frontendURL = process.env.TEST_URL || "http://localhost:8080";
 const idamUrl = process.env.IDAM_API_BASE_URL || "http://localhost:5000";
-const username = "a@b.com";
-const password = "4590fgvhbfgbDdffm3lk4j";
 
 propertiesVolume.addTo(config);
 
@@ -26,7 +24,9 @@ export class TestUtil {
     }
   }
 
-  static async createNewUser(): Promise<void> {
+  static async createNewUser(username: string, password: string): Promise<void> {
+    await axios.delete(`${idamUrl}/testing-support/accounts/${username}`)
+      .catch(() => console.log("User could not be found"));
     const userInfo = {
       forename: "John",
       surname: "Smith",
@@ -43,7 +43,7 @@ export class TestUtil {
     }
   }
 
-  static async requestUserToken(): Promise<string> {
+  static async requestUserToken(username: string, password: string): Promise<string> {
     const headers = {
       "Content-Type": "application/x-www-form-urlencoded",
     };
