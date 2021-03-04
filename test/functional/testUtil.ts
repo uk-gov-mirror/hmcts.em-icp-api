@@ -57,7 +57,7 @@ export class TestUtil {
       forename: "John",
       surname: "Smith",
       email: username,
-      password: password
+      password: password,
     };
 
     try {
