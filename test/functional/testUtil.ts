@@ -6,6 +6,8 @@ const config = require("config");
 const url = require("url");
 const frontendURL = process.env.TEST_URL || "http://localhost:8080";
 const idamUrl = process.env.IDAM_API_BASE_URL || "http://localhost:5000";
+const username = "icpFTestUser@em.com";
+const password = "4590fgvhbfgbDdffm3lk4j";
 
 propertiesVolume.addTo(config);
 
@@ -24,26 +26,8 @@ export class TestUtil {
     }
   }
 
-  static async createNewUser(username: string, password: string): Promise<void> {
-    await axios.delete(`${idamUrl}/testing-support/accounts/${username}`)
-      .catch(() => console.log("User could not be found"));
-    const userInfo = {
-      forename: "John",
-      surname: "Smith",
-      email: username,
-      password: password,
-      roles: [{ code: "caseworker" }],
-    };
-
-    try {
-      await axios.post(`${idamUrl}/testing-support/accounts`, userInfo).catch(err => console.log(err));
-    } catch (err) {
-      console.log("error creating new user");
-      throw err;
-    }
-  }
-
-  static async requestUserToken(username: string, password: string): Promise<string> {
+  static async requestUserToken(): Promise<string> {
+    await this.createNewUser();
     const headers = {
       "Content-Type": "application/x-www-form-urlencoded",
     };
@@ -60,6 +44,27 @@ export class TestUtil {
       return response.data["access_token"];
     } catch (err) {
       console.log("error fetching token");
+      throw err;
+    }
+  }
+
+
+  static async createNewUser(): Promise<void> {
+    await axios.delete(`${idamUrl}/testing-support/accounts/${username}`)
+      .catch(() => console.log("User could not be found"));
+
+    const userInfo = {
+      forename: "John",
+      surname: "Smith",
+      email: username,
+      password: password
+    };
+
+    try {
+      await axios.post(`${idamUrl}/testing-support/accounts`, userInfo)
+        .catch(err => console.log(err));
+    } catch (err) {
+      console.log("error creating new user");
       throw err;
     }
   }
