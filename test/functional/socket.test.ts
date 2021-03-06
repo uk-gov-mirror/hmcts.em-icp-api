@@ -21,9 +21,7 @@ describe("Socket io functional tests", () => {
       path: "/icp/socket.io",
       secure: false,
       rejectUnauthorized: false,
-      extraHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
+      extraHeaders: { "Authorization": `Bearer ${token}` },
     });
   });
 
