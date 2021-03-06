@@ -13,10 +13,7 @@ describe("/GET sessions", () => {
 
   before(async () => {
     token = await TestUtil.requestUserToken();
-  });
-
-  beforeEach(async () => {
-    await TestUtil.waitFor(1000);
+    console.log("this is the token ", token);
   });
 
   it("it should return (200) OK", async () => {
