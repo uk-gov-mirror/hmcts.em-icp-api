@@ -38,6 +38,7 @@ describe("IdamClient", () => {
       .catch((err) => {
         expect(err.message).to.contain("Invalid token specified:");
         expect(idamClient.logger.error.called).to.be.true;
+        expect(idamClient.logger.info.called).to.be.false;
       });
   });
 });
