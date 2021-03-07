@@ -32,16 +32,14 @@ export class IdamClient {
   public async verifyToken(token: string): Promise<void> {
     try {
       const tokenString = token.split(" ")[1];
-      this.logger.info("checkpoint tokenString", tokenString);
-
       const decodedHeader = jwtDecode(tokenString, { header: true });
       this.logger.info("checkpoint tokenString", decodedHeader);
 
       const algorithm = await this.getJwks(decodedHeader.alg);
-      this.logger.info("checkpoint tokenString", algorithm);
+      // this.logger.info("checkpoint tokenString", algorithm);
 
       const pem = jwkToPem(algorithm);
-      this.logger.info("checkpoint tokenString", pem);
+      // this.logger.info("checkpoint tokenString", pem);
 
       return await jwt.verify(tokenString, pem, { algorithms: algorithm.alg });
     } catch (e) {
