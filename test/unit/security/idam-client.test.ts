@@ -6,7 +6,7 @@ import sinon from "sinon";
 
 describe("IdamClient", () => {
 
-  let server, idamClient, axiosStub;
+  let server, idamClient, sandbox;
   const get = (url) => {
     if (url === "/o/userinfo") {
       return Promise.resolve({ data: "userInfo" });
@@ -16,13 +16,14 @@ describe("IdamClient", () => {
   };
 
   beforeEach(() => {
+    sandbox = sinon.createSandbox();
     server = { get: get };
-    axiosStub = sinon.stub(Axios, "create").returns(server);
+    sandbox.stub(Axios, "create").returns(server);
     idamClient = new IdamClient();
   });
 
   afterEach(() => {
-    axiosStub.restore();
+    sandbox.restore();
   });
 
   it("it should get user info", async () => {
@@ -31,7 +32,13 @@ describe("IdamClient", () => {
   });
 
   it("it should verify token", async () => {
+    sandbox.spy(idamClient.logger, "info");
+    sandbox.spy(idamClient.logger, "error");
     await idamClient.verifyToken("Bearer jwtToken")
-      .catch((err) => expect(err.message).to.contain("Invalid token specified:"));
+      .catch((err) => {
+        expect(err.message).to.contain("Invalid token specified:");
+        expect(idamClient.logger.error.called).to.be.true;
+        expect(idamClient.logger.info.called).to.be.true;
+      });
   });
 });
