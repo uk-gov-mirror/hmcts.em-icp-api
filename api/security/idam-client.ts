@@ -32,10 +32,18 @@ export class IdamClient {
   public async verifyToken(token: string): Promise<void> {
     try {
       const tokenString = token.split(" ")[1];
+      logger.error("checkpoint tokenString", tokenString);
+
       const decodedHeader = jwtDecode(tokenString, { header: true });
+      logger.error("checkpoint tokenString", decodedHeader);
+
       const algorithm = await this.getJwks(decodedHeader.alg);
+      logger.error("checkpoint tokenString", algorithm);
+
       const pem = jwkToPem(algorithm);
-      return await jwt.verify(tokenString, pem, {algorithms: algorithm.alg});
+      logger.error("checkpoint tokenString", pem);
+
+      return await jwt.verify(tokenString, pem, { algorithms: algorithm.alg });
     } catch (e) {
       logger.error("Idam Client: Error encountered when verifying User token");
       logger.error(e);
