@@ -11,7 +11,6 @@ describe("Socket io functional tests", () => {
 
   before(async () => {
     token = await TestUtil.requestUserToken();
-    console.log("this is the token ", token);
     const icpSession = await TestUtil.createIcpSession(token, "1234");
     clientInfo = { username: icpSession.username, ...icpSession.session };
   });
