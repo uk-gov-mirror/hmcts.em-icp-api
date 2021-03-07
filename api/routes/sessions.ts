@@ -21,7 +21,7 @@ router.get("/icp/sessions/:caseId", async (req, res) => {
   } catch (e) {
     logger.error("Error when attempting to verify Auth token");
     logger.error(e);
-    return res.status(401).send({error: e});
+    return res.status(401).send({ error: e });
   }
 
   const userInfo: UserInfo = await idam.getUserInfo(token);
