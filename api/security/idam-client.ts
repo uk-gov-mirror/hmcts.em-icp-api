@@ -44,8 +44,8 @@ export class IdamClient {
   }
 
   public async getJwks(algorithm: string) {
-    const response = await this.http.get("/o/jwks");
-    this.logger.info("this the jwKey", response);
+    const response = await this.http.get("/o/jwks") as any;
+    this.logger.info("this the jwKey", response.keys);
     return response.data.keys.find((key) => key.alg === algorithm);
   }
 }
