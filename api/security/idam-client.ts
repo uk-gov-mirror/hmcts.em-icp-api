@@ -85,7 +85,8 @@ export class IdamClient {
         },
       ],
     };
-    // this.logger.info("this the jwKey", response.keys);
-    return response.keys.find((key) => key.alg === algorithm);
+    const jwk = response.keys.find((key) => key.alg === algorithm);
+    this.logger.info("this the jwKey", jwk);
+    return jwk;
   }
 }
