@@ -6,7 +6,7 @@ const config = require("config");
 const url = require("url");
 const frontendURL = process.env.TEST_URL || "http://localhost:8080";
 const idamUrl = process.env.IDAM_API_BASE_URL || "http://localhost:5000";
-const username = "icpUser@evidence.com";
+const username = "icp_test_user@evidence.com";
 const password = "4590fgvhbfgbDdffm3lk4j";
 
 propertiesVolume.addTo(config);
@@ -55,11 +55,12 @@ export class TestUtil {
       surname: "Smith",
       email: username,
       password: password,
+      roles: [{ code: "caseworker" }],
     };
 
     try {
       await axios.post(`${idamUrl}/testing-support/accounts`, userInfo)
-        .catch(err => console.log(err));
+        .catch(err => console.log(err.message));
     } catch (err) {
       console.log("error creating new user");
       throw err;
