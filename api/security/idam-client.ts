@@ -34,7 +34,6 @@ export class IdamClient {
       const tokenString = token.split(" ")[1];
       const decodedHeader = jwtDecode(tokenString, { header: true });
       const jwKey = await this.getJwks(decodedHeader.alg);
-      this.logger.info("this the jwKey", jwKey);
       const pem = jwkToPem(jwKey);
       return await jwt.verify(tokenString, pem, { algorithms: jwKey.alg });
     } catch (e) {
@@ -45,7 +44,9 @@ export class IdamClient {
   }
 
   private async getJwks(algorithm: string) {
+    this.logger.info("this the algorithm", algorithm);
     const response = await this.http.get("/o/jwks");
+    this.logger.info("this the jwKey", response);
     return response.data.keys.find((key) => key.alg === algorithm);
   }
 }
