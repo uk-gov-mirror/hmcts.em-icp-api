@@ -6,7 +6,6 @@ const jwt = require("jsonwebtoken");
 const jwkToPem = require("jwk-to-pem");
 const jwtDecode = require("jwt-decode");
 const { Logger } = require("@hmcts/nodejs-logging");
-const logger = Logger.getLogger("idam-client");
 
 /**
  * IDAM client that handles token authentication
@@ -14,6 +13,7 @@ const logger = Logger.getLogger("idam-client");
 export class IdamClient {
 
   private readonly http: AxiosInstance;
+  logger = Logger.getLogger("idam-client");
 
   constructor() {
     this.http = Axios.create({
@@ -32,21 +32,21 @@ export class IdamClient {
   public async verifyToken(token: string): Promise<void> {
     try {
       const tokenString = token.split(" ")[1];
-      logger.error("checkpoint tokenString", tokenString);
+      this.logger.info("checkpoint tokenString", tokenString);
 
       const decodedHeader = jwtDecode(tokenString, { header: true });
-      logger.error("checkpoint tokenString", decodedHeader);
+      this.logger.info("checkpoint tokenString", decodedHeader);
 
       const algorithm = await this.getJwks(decodedHeader.alg);
-      logger.error("checkpoint tokenString", algorithm);
+      this.logger.info("checkpoint tokenString", algorithm);
 
       const pem = jwkToPem(algorithm);
-      logger.error("checkpoint tokenString", pem);
+      this.logger.info("checkpoint tokenString", pem);
 
       return await jwt.verify(tokenString, pem, { algorithms: algorithm.alg });
     } catch (e) {
-      logger.error("Idam Client: Error encountered when verifying User token");
-      logger.error(e);
+      this.logger.error("Idam Client: Error encountered when verifying User token");
+      this.logger.error(e);
       throw e;
     }
   }
